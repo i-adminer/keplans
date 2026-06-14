@@ -1,6 +1,7 @@
 import { ChevronDown, MapPin, Phone } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 type FaqItem = {
   question: string;
@@ -143,12 +144,14 @@ export default function ContactSection() {
             </label>
 
             <div className="mt-8 flex justify-center">
-              <button
-                type="submit"
-                className="inline-flex cursor-pointer h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                Get Expert Advice
-              </button>
+              <Link href={"/contact-us"}>
+                <button
+                  type="submit"
+                  className="inline-flex cursor-pointer h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Get Expert Advice
+                </button>
+              </Link>
             </div>
           </form>
         </div>
