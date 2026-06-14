@@ -4,8 +4,12 @@ import AuthShell from "@/components/auth/auth-shell";
 import SignInForm from "@/components/auth/signin-form";
 
 export const metadata: Metadata = {
-  title: "Sign In | KEPlans",
-  description: "Sign in to your KEPlans account.",
+  title: "Sign In - Access Your Saved House Plans",
+  description: "Sign in to your KEPlans account to access your saved house plans, favorites, and project notes. Secure authentication with email verification.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function SignInPage() {

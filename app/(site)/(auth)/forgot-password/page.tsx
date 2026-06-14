@@ -4,8 +4,12 @@ import AuthShell from "@/components/auth/auth-shell";
 import ForgotPasswordForm from "@/components/auth/forgot-password-form";
 
 export const metadata: Metadata = {
-  title: "Forgot Password | KEPlans",
-  description: "Reset your KEPlans password.",
+  title: "Forgot Password - Reset Your KEPlans Account",
+  description: "Reset your KEPlans password securely. Enter your email to receive a verification code and regain access to your account.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ForgotPasswordPage() {

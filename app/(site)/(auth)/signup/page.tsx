@@ -4,8 +4,12 @@ import AuthShell from "@/components/auth/auth-shell";
 import SignUpForm from "@/components/auth/signup-form";
 
 export const metadata: Metadata = {
-  title: "Sign Up | KEPlans",
-  description: "Create your KEPlans account.",
+  title: "Sign Up - Create Your KEPlans Account",
+  description: "Create your free KEPlans account to save house plans, create favorites lists, and access exclusive features. Quick and secure registration.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function SignUpPage() {
