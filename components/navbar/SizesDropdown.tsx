@@ -30,7 +30,11 @@ const floors: string[] = ["1 Floor", "2 Floors", "3 Floors", "4+ Floors"];
 
 const areas: string[] = ["Under 100 m²", "100-200 m²", "200-300 m²", "300+ m²"];
 
-const SizesDropdown: React.FC = () => {
+interface SizesDropdownProps {
+  onNavigate?: () => void;
+}
+
+const SizesDropdown: React.FC<SizesDropdownProps> = ({ onNavigate }) => {
   const [selectedBedroom, setSelectedBedroom] = React.useState<string | null>(
     null,
   );
@@ -158,6 +162,7 @@ const SizesDropdown: React.FC = () => {
               </div>
               <Link
                 href={plansHref}
+                onClick={onNavigate}
                 className="flex items-center cursor-pointer gap-2 bg-white text-primary px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors"
               >
                 Find Plans

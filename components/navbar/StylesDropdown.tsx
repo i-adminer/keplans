@@ -43,7 +43,11 @@ const houseStyles: HouseStyle[] = [
   { name: "Victorian", icon: Castle, image: "/api/placeholder/600/400" },
 ];
 
-const StylesDropdown: React.FC = () => {
+interface StylesDropdownProps {
+  onNavigate?: () => void;
+}
+
+const StylesDropdown: React.FC<StylesDropdownProps> = ({ onNavigate }) => {
   const [selectedStyle, setSelectedStyle] = React.useState<HouseStyle>(
     houseStyles[0],
   );
@@ -100,6 +104,7 @@ const StylesDropdown: React.FC = () => {
             </p>
             <Link
               href={plansHref}
+              onClick={onNavigate}
               className="flex items-center font-playfair z-10 cursor-pointer gap-2 bg-white text-primary px-6 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors"
             >
               Continue to Plans

@@ -222,7 +222,7 @@ export function buildPlansHref(
 }
 
 export function formatMoney(value: number): string {
-  return `$${value.toLocaleString("en-US")}`;
+  return `KES ${value.toLocaleString("en-US")}`;
 }
 
 export function formatArea(value: number): string {

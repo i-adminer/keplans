@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
   return {
     title: `${product.name} - ${product.sqft} Sq Ft ${product.style} Home Design`,
-    description: `${product.description} Starting at $${product.price}. View floor plans, elevations, and specifications.`,
+    description: `${product.description} Starting at KES ${product.price}. View floor plans, elevations, and specifications.`,
     keywords: [
       `${product.style.toLowerCase()} house plans`,
       `${product.beds} bedroom house plans`,

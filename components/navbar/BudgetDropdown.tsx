@@ -22,7 +22,11 @@ const priceRanges: PriceRange[] = [
   { label: "500,000+", min: 500000, max: 1000000 },
 ];
 
-const BudgetDropdown: React.FC = () => {
+interface BudgetDropdownProps {
+  onNavigate?: () => void;
+}
+
+const BudgetDropdown: React.FC<BudgetDropdownProps> = ({ onNavigate }) => {
   const [priceRange, setPriceRange] = useState<[number, number]>([
     100000, 400000,
   ]);
@@ -51,9 +55,9 @@ const BudgetDropdown: React.FC = () => {
   };
 
   const formatPrice = (price: number): string => {
-    if (price >= 1000000) return `$${(price / 1000000).toFixed(1)}M`;
-    if (price >= 1000) return `$${(price / 1000).toFixed(0)}K`;
-    return `$${price}`;
+    if (price >= 1000000) return `KES ${(price / 1000000).toFixed(1)}M`;
+    if (price >= 1000) return `KES ${(price / 1000).toFixed(0)}K`;
+    return `KES ${price}`;
   };
 
   return (
@@ -122,9 +126,9 @@ const BudgetDropdown: React.FC = () => {
               </div>
 
               <div className="flex justify-between text-xs text-gray-300 mt-2">
-                <span>$0</span>
-                <span>$500K</span>
-                <span>$1M</span>
+                  <span>KES 0</span>
+                  <span>KES 500K</span>
+                  <span>KES 1M</span>
               </div>
             </div>
           </div>
@@ -162,6 +166,7 @@ const BudgetDropdown: React.FC = () => {
                   { minPrice: priceRange[0], maxPrice: priceRange[1] },
                   searchParams.toString(),
                 )}
+                onClick={onNavigate}
                 className="flex items-center gap-2 bg-white text-primary px-6 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors"
               >
                 View Plans in Budget

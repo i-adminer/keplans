@@ -43,7 +43,7 @@ const Hero: React.FC = () => {
       title: "Modern Farmhouse",
       category: "Farmhouse",
       image: "/herobg/hbg-2.jpg",
-      price: "$150,000 - $200,000",
+      price: "KES 150,000 - KES 200,000",
       rating: 4.8,
     },
     {
@@ -51,7 +51,7 @@ const Hero: React.FC = () => {
       title: "Contemporary Villa",
       category: "Contemporary",
       image: "/herobg/hbg-2.jpg",
-      price: "$250,000 - $350,000",
+      price: "KES 250,000 - KES 350,000",
       rating: 4.6,
     },
     {
@@ -59,7 +59,7 @@ const Hero: React.FC = () => {
       title: "Traditional Bungalow",
       category: "Traditional",
       image: "/herobg/hbg-2.jpg",
-      price: "$120,000 - $180,000",
+      price: "KES 120,000 - KES 180,000",
       rating: 4.9,
     },
   ];

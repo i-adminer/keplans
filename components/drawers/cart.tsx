@@ -105,7 +105,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     {item.name}
                   </Link>
                   <p className="text-muted-foreground font-semibold mt-1">
-                    ${item.price.toFixed(2)}
+                    KES {item.price.toFixed(2)}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <button
@@ -141,7 +141,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           <div className="border-t p-4 space-y-3">
             <div className="flex justify-between text-lg font-semibold">
               <span>Total</span>
-              <span className="">${total.toFixed(2)}</span>
+              <span className="">KES {total.toFixed(2)}</span>
             </div>
             <button
               onClick={() => {

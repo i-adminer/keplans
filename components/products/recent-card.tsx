@@ -32,7 +32,7 @@ const RecentCard = () => {
           </div>
 
           {/* Price */}
-          <div className="text-base font-bold text-green-600">$120,000</div>
+          <div className="text-base font-bold text-green-600">KES 120,000</div>
 
           {/* Features */}
           <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">

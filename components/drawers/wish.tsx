@@ -109,7 +109,7 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
                     {item.name}
                   </Link>
                   <p className=" font-semibold mt-1">
-                    ${item.price.toFixed(2)}
+                    KES {item.price.toFixed(2)}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <button

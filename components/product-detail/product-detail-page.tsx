@@ -178,7 +178,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
               }`}
             >
               <div
-                className={`relative ${idx === 0 ? "aspect-[16/10]" : "aspect-square"}`}
+                className={`relative ${idx === 0 ? "aspect-16/10" : "aspect-square"}`}
               >
                 <Image
                   src={image.url}
@@ -187,17 +187,17 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                   className="object-cover transition-transform group-hover:scale-105"
                 />
                 {idx === 0 && (
-                  <div className="absolute right-3 top-3 rounded-full bg-white px-3 py-1.5 text-xs font-medium shadow-lg">
+                  <div className="absolute right-3 top-3 rounded-full bg-white/50 dark:text-primary px-3 py-1.5 text-xs font-medium shadow-lg">
                     3D Tour →
                   </div>
                 )}
                 {idx === 2 && (
-                  <div className="absolute right-3 top-3 rounded-full bg-white px-3 py-1.5 text-xs font-medium shadow-lg">
+                  <div className="absolute right-3 top-3 rounded-full bg-white/50 dark:text-primary px-3 py-1.5 text-xs font-medium shadow-lg">
                     Floor Plans
                   </div>
                 )}
                 {idx === 3 && (
-                  <div className="absolute right-3 top-3 rounded-full bg-white px-3 py-1.5 text-xs font-medium shadow-lg">
+                  <div className="absolute right-3 top-3 rounded-full bg-white/50 dark:text-primary px-3 py-1.5 text-xs font-medium shadow-lg">
                     View All Images
                   </div>
                 )}
@@ -295,8 +295,8 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                     off?
                   </p>
                   <p className="text-muted-foreground">
-                    Let us know a bit about your plans and we&apos;ll be happy to
-                    help.
+                    Let us know a bit about your plans and we&apos;ll be happy
+                    to help.
                   </p>
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <Button size="lg" className="gap-2">
@@ -445,7 +445,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
               <p className="mt-1 text-sm text-muted-foreground">
                 Starts at{" "}
                 <span className="font-semibold text-foreground">
-                  ${product.price.toLocaleString()}
+                  KES {product.price.toLocaleString()}
                 </span>
               </p>
               <div className="mt-2 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300">
@@ -464,12 +464,12 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                     </label>
                   </div>
                   <select className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm">
-                    <option>PDF Set - ${product.price.toLocaleString()}</option>
+                    <option>PDF Set - KES {product.price.toLocaleString()}</option>
                     <option>
-                      CAD Files - ${(product.price + 500).toLocaleString()}
+                      CAD Files - KES {(product.price + 500).toLocaleString()}
                     </option>
                     <option>
-                      Reproducible Set - $
+                      Reproducible Set - KES
                       {(product.price + 300).toLocaleString()}
                     </option>
                   </select>
@@ -488,8 +488,8 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                   <select className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
                     <option>Make Selection</option>
                     <option>Crawl Space (Included)</option>
-                    <option>Slab (+$200)</option>
-                    <option>Basement (+$400)</option>
+                    <option>Slab (+KES 200)</option>
+                    <option>Basement (+KES 400)</option>
                   </select>
                 </div>
 
@@ -506,7 +506,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                   <select className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
                     <option>Make Selection</option>
                     <option>Wood Frame (Standard)</option>
-                    <option>Steel Frame (+$150)</option>
+                    <option>Steel Frame (+KES 150)</option>
                   </select>
                 </div>
 
@@ -522,9 +522,9 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                   </div>
                   <select className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
                     <option>Optional Add-Ons</option>
-                    <option>Material List (+$100)</option>
-                    <option>Mirror Reverse (+$50)</option>
-                    <option>Extra Sets (+$75 each)</option>
+                    <option>Material List (+KES 100)</option>
+                    <option>Mirror Reverse (+KES 50)</option>
+                    <option>Extra Sets (+KES 75 each)</option>
                   </select>
                 </div>
               </div>
@@ -558,7 +558,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
               <div className="mt-6 rounded-lg bg-accent p-4 text-center">
                 <p className="text-sm">
                   <span className="font-semibold">0% APR</span> or as low as{" "}
-                  <span className="font-semibold">$78/mo</span>
+                  <span className="font-semibold">KES 78/mo</span>
                 </p>
                 <button className="mt-1 text-xs text-muted-foreground underline">
                   See if you qualify

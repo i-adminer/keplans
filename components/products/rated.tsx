@@ -43,7 +43,7 @@ const TopRatedCard = () => {
 
         {/* Price with premium indicator */}
         <div className="flex items-baseline gap-2">
-          <div className="text-base font-bold text-green-600">$120,000</div>
+          <div className="text-base font-bold text-green-600">KES 120,000</div>
           <div className="flex items-center gap-0.5 text-xs text-muted-foreground">
             <TrendingUp className="h-3 w-3 text-green-500" />
             <span className="text-green-600">+15% this week</span>

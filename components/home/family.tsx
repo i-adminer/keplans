@@ -38,7 +38,7 @@ const Family = () => {
             {
               id: 1,
               title: "Sunset Valley Home",
-              price: "$185,000",
+              price: "KES 185,000",
               beds: 4,
               baths: 3,
               area: "280m²",
@@ -50,7 +50,7 @@ const Family = () => {
             {
               id: 2,
               title: "Garden Paradise",
-              price: "$210,000",
+              price: "KES 210,000",
               beds: 5,
               baths: 4,
               area: "350m²",
@@ -62,7 +62,7 @@ const Family = () => {
             {
               id: 3,
               title: "Cozy Nest",
-              price: "$145,000",
+              price: "KES 145,000",
               beds: 3,
               baths: 2,
               area: "190m²",
@@ -74,7 +74,7 @@ const Family = () => {
             {
               id: 4,
               title: "Heritage Estate",
-              price: "$325,000",
+              price: "KES 325,000",
               beds: 6,
               baths: 5,
               area: "450m²",

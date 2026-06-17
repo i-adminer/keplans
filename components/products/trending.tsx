@@ -43,7 +43,7 @@ const TrendingCard = () => {
 
         {/* Price with premium indicator */}
         <div className="items-baseline">
-          <div className="text-base font-bold text-green-600">$120,000</div>
+          <div className="text-base font-bold text-green-600">KES 120,000</div>
         </div>
 
         {/* Features Grid - Same structure but with hover effects */}

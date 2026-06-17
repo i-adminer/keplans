@@ -43,7 +43,12 @@ const Navbar: React.FC = () => {
     }, 200);
   };
 
-  const closeMobileMenu = (): void => {
+  const closeDropdowns = (): void => {
+    setActiveDropdown(null);
+  };
+
+  const closeAllMenus = (): void => {
+    setActiveDropdown(null);
     setMobileMenuOpen(false);
   };
 
@@ -68,7 +73,7 @@ const Navbar: React.FC = () => {
       <nav className="fixed w-full top-0 z-40" ref={navbarRef}>
         <div className="w-full md:w-[75%] bg-primary text-white md:rounded-b-2xl mx-auto transition-all duration-300">
           <div className="h-20 flex justify-between items-center px-4 md:px-6">
-            <Link href={"/"}>
+            <Link href={"/"} onClick={closeDropdowns}>
               <Logo />
             </Link>
 
@@ -91,7 +96,7 @@ const Navbar: React.FC = () => {
                   ) : (
                     <Link
                       href={item.href!}
-                      onClick={closeMobileMenu}
+                      onClick={closeDropdowns}
                       className="hover:text-gray-200 transition-colors py-2"
                     >
                       {item.label}
@@ -127,7 +132,7 @@ const Navbar: React.FC = () => {
                   </span>
                 )}
               </button>
-              <Link href="/signin" aria-label="Open account sign in">
+              <Link href="/signin" aria-label="Open account sign in" onClick={closeDropdowns}>
                 <User className="text-white cursor-pointer size-5 hover:text-gray-200 transition-colors" />
               </Link>
               <ThemeSwitcher />
@@ -165,12 +170,12 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Dropdowns */}
-          {activeDropdown === "styles" && (
+              {activeDropdown === "styles" && (
             <div
               onMouseEnter={() => handleMouseEnter("styles")}
               onMouseLeave={handleMouseLeave}
             >
-              <StylesDropdown />
+              <StylesDropdown onNavigate={closeDropdowns} />
             </div>
           )}
           {activeDropdown === "sizes" && (
@@ -178,7 +183,7 @@ const Navbar: React.FC = () => {
               onMouseEnter={() => handleMouseEnter("sizes")}
               onMouseLeave={handleMouseLeave}
             >
-              <SizesDropdown />
+              <SizesDropdown onNavigate={closeDropdowns} />
             </div>
           )}
           {activeDropdown === "budget" && (
@@ -186,7 +191,7 @@ const Navbar: React.FC = () => {
               onMouseEnter={() => handleMouseEnter("budget")}
               onMouseLeave={handleMouseLeave}
             >
-              <BudgetDropdown />
+              <BudgetDropdown onNavigate={closeDropdowns} />
             </div>
           )}
 
@@ -199,12 +204,12 @@ const Navbar: React.FC = () => {
                     <MobileDropdownItem
                       label={item.label}
                       type={item.dropdown}
-                      onNavigate={closeMobileMenu}
+                      onNavigate={closeAllMenus}
                     />
                   ) : (
                     <Link
                       href={item.href!}
-                      onClick={closeMobileMenu}
+                      onClick={closeAllMenus}
                       className="block hover:text-gray-200"
                     >
                       {item.label}
