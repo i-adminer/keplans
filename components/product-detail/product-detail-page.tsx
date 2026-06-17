@@ -295,7 +295,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                     off?
                   </p>
                   <p className="text-muted-foreground">
-                    Let us know a bit about your plans and we'll be happy to
+                    Let us know a bit about your plans and we&apos;ll be happy to
                     help.
                   </p>
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -355,7 +355,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
             {activeTab === "included" && (
               <section className="rounded-lg border border-border bg-background p-6">
                 <h2 className="mb-6 font-playfair text-2xl font-semibold">
-                  What's Included
+                  What&apos;s Included
                 </h2>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">

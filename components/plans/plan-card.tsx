@@ -23,8 +23,14 @@ export default function PlanCard({
   isFavorite,
 }: PlanCardProps) {
   return (
-    <Link href={`/product/${plan.id}`}>
-      <article className="group overflow-hidden rounded-xl mt-2  bg-background transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+    <article className="group relative mt-2 overflow-hidden rounded-xl bg-background transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+      <Link
+        href={`/product/${plan.id}`}
+        aria-label={`View ${plan.name}`}
+        className="absolute inset-0 z-10 rounded-xl"
+      />
+
+      <div className="relative z-20">
         <div className="relative aspect-4/3 overflow-hidden">
           <Image
             src={plan.image}
@@ -62,6 +68,7 @@ export default function PlanCard({
             <span className="text-muted-foreground">({plan.reviews})</span>
           </div>
         </div>
+
         <div className="space-y-4 p-5">
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-3">
@@ -108,8 +115,8 @@ export default function PlanCard({
             </Button>
           </div>
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }
 

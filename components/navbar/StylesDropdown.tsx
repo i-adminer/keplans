@@ -113,7 +113,13 @@ const StylesDropdown: React.FC = () => {
 };
 
 // Mobile Styles Content
-const StylesMobileContent: React.FC = () => {
+interface StylesMobileContentProps {
+  onNavigate?: () => void;
+}
+
+const StylesMobileContent: React.FC<StylesMobileContentProps> = ({
+  onNavigate,
+}) => {
   const searchParams = useSearchParams();
 
   return (
@@ -127,6 +133,7 @@ const StylesMobileContent: React.FC = () => {
               { style: styleValueFromLabel(style.name) },
               searchParams.toString(),
             )}
+            onClick={onNavigate}
             className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 w-full text-left text-sm"
           >
             <Icon className="size-4" />

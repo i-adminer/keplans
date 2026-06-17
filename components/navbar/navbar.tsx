@@ -43,6 +43,10 @@ const Navbar: React.FC = () => {
     }, 200);
   };
 
+  const closeMobileMenu = (): void => {
+    setMobileMenuOpen(false);
+  };
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -87,6 +91,7 @@ const Navbar: React.FC = () => {
                   ) : (
                     <Link
                       href={item.href!}
+                      onClick={closeMobileMenu}
                       className="hover:text-gray-200 transition-colors py-2"
                     >
                       {item.label}
@@ -194,9 +199,14 @@ const Navbar: React.FC = () => {
                     <MobileDropdownItem
                       label={item.label}
                       type={item.dropdown}
+                      onNavigate={closeMobileMenu}
                     />
                   ) : (
-                    <Link href={item.href!} className="block hover:text-gray-200">
+                    <Link
+                      href={item.href!}
+                      onClick={closeMobileMenu}
+                      className="block hover:text-gray-200"
+                    >
                       {item.label}
                     </Link>
                   )}
@@ -223,11 +233,13 @@ const Navbar: React.FC = () => {
 interface MobileDropdownItemProps {
   label: string;
   type: DropdownType;
+  onNavigate: () => void;
 }
 
 const MobileDropdownItem: React.FC<MobileDropdownItemProps> = ({
   label,
   type,
+  onNavigate,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -244,9 +256,9 @@ const MobileDropdownItem: React.FC<MobileDropdownItemProps> = ({
       </button>
       {isOpen && (
         <div className="mt-2 pl-4">
-          {type === "styles" && <StylesMobileContent />}
-          {type === "sizes" && <SizesMobileContent />}
-          {type === "budget" && <BudgetMobileContent />}
+          {type === "styles" && <StylesMobileContent onNavigate={onNavigate} />}
+          {type === "sizes" && <SizesMobileContent onNavigate={onNavigate} />}
+          {type === "budget" && <BudgetMobileContent onNavigate={onNavigate} />}
         </div>
       )}
     </div>

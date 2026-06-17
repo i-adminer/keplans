@@ -177,7 +177,7 @@ const Hero: React.FC = () => {
           className="object-cover z-0"
         />
         <div className="z-10 absolute inset-0 flex flex-col justify-center items-center gap-y-5">
-          <span className="lg:text-7xl max-sm:text-5xl font-realce text-white font-black text-center px-4">
+          <span className="lg:text-7xl text-5xl font-realce text-white font-black text-center px-4">
             Your blueprint for smarter living!
           </span>
           <DonutSelector />

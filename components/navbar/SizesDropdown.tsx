@@ -172,7 +172,13 @@ const SizesDropdown: React.FC = () => {
 };
 
 // Mobile Sizes Content
-const SizesMobileContent: React.FC = () => {
+interface SizesMobileContentProps {
+  onNavigate?: () => void;
+}
+
+const SizesMobileContent: React.FC<SizesMobileContentProps> = ({
+  onNavigate,
+}) => {
   const [section, setSection] = React.useState<string | null>(null);
   const [selectedBedroom, setSelectedBedroom] = React.useState<string | null>(null);
   const [selectedFloor, setSelectedFloor] = React.useState<string | null>(null);
@@ -257,6 +263,7 @@ const SizesMobileContent: React.FC = () => {
 
       <Link
         href={plansHref}
+        onClick={onNavigate}
         className="mt-3 flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-gray-100"
       >
         Find matching plans

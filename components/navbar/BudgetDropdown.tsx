@@ -176,7 +176,13 @@ const BudgetDropdown: React.FC = () => {
 };
 
 // Mobile Budget Content
-const BudgetMobileContent: React.FC = () => {
+interface BudgetMobileContentProps {
+  onNavigate?: () => void;
+}
+
+const BudgetMobileContent: React.FC<BudgetMobileContentProps> = ({
+  onNavigate,
+}) => {
   const [priceRange, setPriceRange] = useState<[number, number]>([
     100000, 400000,
   ]);
@@ -232,6 +238,7 @@ const BudgetMobileContent: React.FC = () => {
           { minPrice: priceRange[0], maxPrice: priceRange[1] },
           searchParams.toString(),
         )}
+        onClick={onNavigate}
         className="flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-gray-100"
       >
         View matching plans

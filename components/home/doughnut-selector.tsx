@@ -67,7 +67,7 @@ function SelectorButton({
           }}
         >
           <span className="flex flex-col items-center gap-1 text-center">
-            <span className="font-realce sm:text-2xl text-xl font-semibold uppercase">
+            <span className="font-realce sm:text-2xl text-sm font-semibold uppercase">
               {config.label}, {value ?? 0}
             </span>
           </span>
@@ -128,7 +128,7 @@ export function DonutSelector() {
   }
 
   return (
-    <div className="relative h-56 w-56 rounded-full [clip-path:circle(50%)] bg-background">
+    <div className="relative sm:h-56 sm:w-56 h-40 w-40 rounded-full [clip-path:circle(50%)] bg-background">
       <SelectorButton
         field="bedrooms"
         value={bedrooms}
@@ -148,7 +148,7 @@ export function DonutSelector() {
       />
 
       {/* Center button */}
-      <div className="absolute inset-16 z-30 flex cursor-pointer items-center justify-center rounded-full bg-green-500 transition-colors hover:bg-green-400 active:bg-green-200">
+      <div className="absolute sm:inset-16 inset-12 z-30 flex cursor-pointer items-center justify-center rounded-full bg-green-500 transition-colors hover:bg-green-400 active:bg-green-200">
         <span className="font-realce sm:text-5xl max-sm:text-4xl font-black text-white">
           GO
         </span>
