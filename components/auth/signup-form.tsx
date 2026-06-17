@@ -13,17 +13,17 @@ export default function SignUpForm() {
 
   return (
     <form
-      className="space-y-5"
+      className="space-y-4 sm:space-y-5"
       onSubmit={(event) => {
         event.preventDefault();
         router.push("/verify-otp?flow=signup");
       }}
     >
       <div className="space-y-2">
-        <h2 className="text-3xl font-semibold tracking-tight font-playfair">
+        <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
           Create account
         </h2>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
           Set up your KEPlans account to save shortlist ideas and continue on
           any device.
         </p>
@@ -32,41 +32,41 @@ export default function SignUpForm() {
       <Button
         type="button"
         variant="outline"
-        className="h-11 w-full rounded-full gap-2 cursor-pointer"
+        className="h-10 w-full gap-2 rounded-full cursor-pointer max-sm:text-sm"
         onClick={() => alert("A flower 🌹 for you hardwork!")}
       >
-        <FcGoogle className="size-4" />
+        <FcGoogle className="size-3.5 sm:size-4" />
         Continue with Google
       </Button>
 
       <div className="relative py-1">
         <div className="h-px w-full bg-border" />
-        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground sm:text-xs sm:tracking-[0.25em]">
           or email
         </span>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-2 text-sm font-medium">
+      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+        <label className="block space-y-1.5 text-sm font-medium">
           <span className="flex items-center gap-2">
-            <User className="size-4 text-muted-foreground" />
+            <User className="size-3.5 text-muted-foreground sm:size-4" />
             First name
           </span>
-          <Input autoComplete="given-name" placeholder="First name" required />
+          <Input autoComplete="given-name" placeholder="First name" required className="max-sm:h-8 max-sm:text-sm" />
         </label>
 
-        <label className="block space-y-2 text-sm font-medium">
+        <label className="block space-y-1.5 text-sm font-medium">
           <span className="flex items-center gap-2">
-            <User className="size-4 text-muted-foreground" />
+            <User className="size-3.5 text-muted-foreground sm:size-4" />
             Last name
           </span>
-          <Input autoComplete="family-name" placeholder="Last name" required />
+          <Input autoComplete="family-name" placeholder="Last name" required className="max-sm:h-8 max-sm:text-sm" />
         </label>
       </div>
 
-      <label className="block space-y-2 text-sm font-medium">
+      <label className="block space-y-1.5 text-sm font-medium">
         <span className="flex items-center gap-2">
-          <Mail className="size-4 text-muted-foreground" />
+          <Mail className="size-3.5 text-muted-foreground sm:size-4" />
           Email address
         </span>
         <Input
@@ -74,13 +74,14 @@ export default function SignUpForm() {
           autoComplete="email"
           placeholder="you@example.com"
           required
+          className="max-sm:h-8 max-sm:text-sm"
         />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-2 text-sm font-medium">
+      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+        <label className="block space-y-1.5 text-sm font-medium">
           <span className="flex items-center gap-2">
-            <Lock className="size-4 text-muted-foreground" />
+            <Lock className="size-3.5 text-muted-foreground sm:size-4" />
             Password
           </span>
           <Input
@@ -88,12 +89,13 @@ export default function SignUpForm() {
             autoComplete="new-password"
             placeholder="Create password"
             required
+            className="max-sm:h-8 max-sm:text-sm"
           />
         </label>
 
-        <label className="block space-y-2 text-sm font-medium">
+        <label className="block space-y-1.5 text-sm font-medium">
           <span className="flex items-center gap-2">
-            <Lock className="size-4 text-muted-foreground" />
+            <Lock className="size-3.5 text-muted-foreground sm:size-4" />
             Confirm password
           </span>
           <Input
@@ -101,11 +103,12 @@ export default function SignUpForm() {
             autoComplete="new-password"
             placeholder="Confirm password"
             required
+            className="max-sm:h-8 max-sm:text-sm"
           />
         </label>
       </div>
 
-      <div className="flex items-center justify-between gap-4 text-sm">
+      <div className="flex items-center justify-between gap-3 text-xs sm:gap-4 sm:text-sm">
         <span className="text-muted-foreground">Already have an account?</span>
         <Link href="/signin" className="text-muted-foreground hover:underline">
           Sign in
@@ -114,10 +117,10 @@ export default function SignUpForm() {
 
       <Button
         type="submit"
-        className="h-11 w-full rounded-full gap-2 cursor-pointer"
+        className="h-10 w-full gap-2 rounded-full cursor-pointer max-sm:text-sm"
       >
         Continue
-        <ArrowRight className="size-4" />
+        <ArrowRight className="size-3.5 sm:size-4" />
       </Button>
     </form>
   );

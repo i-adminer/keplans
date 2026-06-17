@@ -27,14 +27,14 @@ export default function VerifyOtpForm({ flow }: VerifyOtpFormProps) {
         return {
           title: "Verify your email",
           description:
-            "Enter the 6-digit code we sent before you reset your password.",
+            "Enter the 4-digit code we sent before you reset your password.",
           continueHref: "/reset-password",
         };
       case "signup":
         return {
           title: "Verify your account",
           description:
-            "Confirm your email with the 6-digit code to activate your account.",
+            "Confirm your email with the 4-digit code to activate your account.",
           continueHref: "/plans",
         };
       default:
@@ -46,13 +46,13 @@ export default function VerifyOtpForm({ flow }: VerifyOtpFormProps) {
     }
   }, [flow]);
 
-  const isComplete = code.replace(/\D/g, "").length === 6;
+  const isComplete = code.replace(/\D/g, "").length === 4;
 
   console.log("FLOW: ", flow);
 
   return (
     <form
-      className="space-y-6 w-88"
+      className="w-full max-w-sm space-y-5 sm:space-y-6"
       onSubmit={(event) => {
         event.preventDefault();
         if (!isComplete) {
@@ -63,21 +63,23 @@ export default function VerifyOtpForm({ flow }: VerifyOtpFormProps) {
       }}
     >
       <div className="space-y-2 text-center sm:text-left">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-          <ShieldCheck className="size-4" />
-          6-digit verification
+        <div className="inline-flex items-center gap-2 rounded-full bg-green-600/10 px-3 py-1 text-[10px] font-medium text-green-600 sm:text-xs">
+          <ShieldCheck className="size-3.5 sm:size-4" />
+          4-digit verification
         </div>
-        <h2 className="text-3xl font-semibold tracking-tight font-playfair">
+        <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
           {copy.title}
         </h2>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
           {copy.description}
         </p>
       </div>
 
-      <OtpInput value={code} onChange={setCode} length={6} autoFocus />
+      <div className="flex w-full justify-center items-center">
+        <OtpInput value={code} onChange={setCode} length={4} autoFocus />
+      </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
         <button
           type="button"
           onClick={() => {
@@ -85,9 +87,9 @@ export default function VerifyOtpForm({ flow }: VerifyOtpFormProps) {
             setResendLabel("Code resent");
             window.setTimeout(() => setResendLabel("Resend OTP"), 2500);
           }}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground cursor-pointer"
+          className="inline-flex items-center gap-2 text-muted-foreground cursor-pointer hover:text-foreground"
         >
-          <RefreshCcw className="size-4" />
+          <RefreshCcw className="size-3.5 sm:size-4" />
           {resendLabel}
         </button>
 
@@ -101,11 +103,11 @@ export default function VerifyOtpForm({ flow }: VerifyOtpFormProps) {
 
       <Button
         type="submit"
-        className="h-11 w-full rounded-full gap-2 cursor-pointer"
+        className="h-10 w-full gap-2 rounded-full cursor-pointer max-sm:text-sm"
         disabled={!isComplete}
       >
         Continue
-        <ArrowRight className="size-4" />
+        <ArrowRight className="size-3.5 sm:size-4" />
       </Button>
     </form>
   );

@@ -12,24 +12,24 @@ export default function ForgotPasswordForm() {
 
   return (
     <form
-      className="space-y-5"
+      className="space-y-4 sm:space-y-5"
       onSubmit={(event) => {
         event.preventDefault();
         router.push("/verify-otp?flow=reset");
       }}
     >
       <div className="space-y-2">
-        <h2 className="text-3xl font-semibold tracking-tight font-playfair">
+        <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
           Forgot password
         </h2>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
           Enter your email and we’ll send a one-time code to continue.
         </p>
       </div>
 
-      <label className="block space-y-2 text-sm font-medium">
+      <label className="block space-y-1.5 text-sm font-medium">
         <span className="flex items-center gap-2">
-          <Mail className="size-4 text-muted-foreground" />
+          <Mail className="size-3.5 text-muted-foreground sm:size-4" />
           Email address
         </span>
         <Input
@@ -37,10 +37,11 @@ export default function ForgotPasswordForm() {
           autoComplete="email"
           placeholder="you@example.com"
           required
+          className="max-sm:h-8 max-sm:text-sm"
         />
       </label>
 
-      <div className="flex items-center justify-between gap-4 text-sm">
+      <div className="flex items-center justify-between gap-3 text-xs sm:gap-4 sm:text-sm">
         <Link href="/signin" className="text-muted-foreground hover:underline">
           Back to sign in
         </Link>
@@ -54,10 +55,10 @@ export default function ForgotPasswordForm() {
 
       <Button
         type="submit"
-        className="h-11 w-full rounded-full gap-2 cursor-pointer"
+        className="h-10 w-full gap-2 rounded-full cursor-pointer max-sm:text-sm"
       >
         Send OTP
-        <ArrowRight className="size-4" />
+        <ArrowRight className="size-3.5 sm:size-4" />
       </Button>
     </form>
   );

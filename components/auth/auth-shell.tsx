@@ -22,9 +22,9 @@ export default function AuthShell({
 }: AuthShellProps) {
   return (
     <div className=" bg-background text-foreground ">
-      <main className="mx-auto w-full max-w-7xl gap-6 px-4 pb-8 sm:px-6 lg:px-8 lg:pb-10 flex justify-center items-center">
+      <main className="mx-auto flex w-full max-w-7xl items-center justify-center gap-6 px-3 pb-6 sm:px-6 sm:pb-8 lg:px-8 lg:pb-10">
         <section className="flex items-center lg:py-8">
-          <div className="w-full rounded-md  p-6 hover:shadow-[0_0_14px_rgb(0,0,0,0.2)] sm:p-8">
+          <div className="w-full rounded-md p-4 hover:shadow-[0_0_14px_rgb(0,0,0,0.2)] sm:p-8">
             {children}
           </div>
         </section>

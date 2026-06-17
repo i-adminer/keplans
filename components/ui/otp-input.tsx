@@ -16,7 +16,7 @@ interface OtpInputProps {
 export function OtpInput({
   value,
   onChange,
-  length = 6,
+  length = 4,
   disabled = false,
   autoFocus = false,
   className,
@@ -46,7 +46,10 @@ export function OtpInput({
   };
 
   const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
-    const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
+    const pasted = event.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, length);
     if (!pasted) {
       return;
     }
@@ -57,7 +60,12 @@ export function OtpInput({
   };
 
   return (
-    <div className={cn("flex flex-wrap items-center justify-between gap-2 sm:gap-3", className)}>
+    <div
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-5 sm:gap-3 w-max",
+        className,
+      )}
+    >
       {Array.from({ length }).map((_, index) => (
         <input
           key={index}
@@ -101,7 +109,7 @@ export function OtpInput({
               focusInput(index + 1);
             }
           }}
-          className="flex h-12 w-11 rounded-2xl border border-input bg-background text-center text-lg font-semibold tracking-widest shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 sm:h-14 sm:w-12"
+          className="flex h-10 w-10 border rounded-full border-input bg-background text-center text-base font-semibold tracking-widest shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 sm:h-14 sm:w-14 sm:text-lg"
           aria-label={`One-time password digit ${index + 1}`}
         />
       ))}
