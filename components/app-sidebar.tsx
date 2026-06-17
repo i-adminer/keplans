@@ -49,30 +49,12 @@ const data = {
           title: "Add New",
           url: "/hp-admin/plans/new",
         },
-        {
-          title: "Categories",
-          url: "/hp-admin/plans/categories",
-        },
       ],
     },
     {
       title: "Orders",
       url: "/hp-admin/orders",
       icon: <Package />,
-      items: [
-        {
-          title: "All Orders",
-          url: "/hp-admin/orders",
-        },
-        {
-          title: "Pending",
-          url: "/hp-admin/orders/pending",
-        },
-        {
-          title: "Completed",
-          url: "/hp-admin/orders/completed",
-        },
-      ],
     },
     {
       title: "Messages",
@@ -83,36 +65,6 @@ const data = {
       title: "Customers",
       url: "/hp-admin/customers",
       icon: <Users />,
-    },
-    {
-      title: "Content",
-      url: "/hp-admin/content",
-      icon: <FileText />,
-      items: [
-        {
-          title: "Pages",
-          url: "/hp-admin/content/pages",
-        },
-        {
-          title: "Blog",
-          url: "/hp-admin/content/blog",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "/hp-admin/settings",
-      icon: <Settings />,
-      items: [
-        {
-          title: "General",
-          url: "/hp-admin/settings/general",
-        },
-        {
-          title: "Admin Users",
-          url: "/hp-admin/settings/users",
-        },
-      ],
     },
   ],
 };

@@ -14,6 +14,7 @@ interface PlanCardProps {
   styleLabel: string;
   onToggleFavorite: (planId: string) => void;
   isFavorite: boolean;
+  isAdmin?: boolean;
 }
 
 export default function PlanCard({
@@ -21,11 +22,12 @@ export default function PlanCard({
   styleLabel,
   onToggleFavorite,
   isFavorite,
+  isAdmin = false,
 }: PlanCardProps) {
   return (
     <article className="group relative mt-2 overflow-hidden rounded-xl bg-background transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
       <Link
-        href={`/product/${plan.id}`}
+        href={isAdmin ? `/hp-admin/plans/${plan.id}/edit` : `/product/${plan.id}`}
         aria-label={`View ${plan.name}`}
         className="absolute inset-0 z-10 rounded-xl"
       />

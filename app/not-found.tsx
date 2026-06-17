@@ -1,7 +1,19 @@
+"use client";
+
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function GlobalNotFound() {
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <div className="bg-cream dark:bg-cream/10 h-screen w-screen flex justify-center items-center">
       <div className="flex flex-col justify-center items-center">
@@ -13,12 +25,13 @@ export default function GlobalNotFound() {
           404: Not Found
         </h2>
         <p>Could not find requested resource</p>
-        <div className="flex gap-2 items-center justify-center bg-white text-primary p-3 mt-3 rounded-md hover:p-2 cursor-pointer">
+        <button
+          onClick={handleGoBack}
+          className="flex gap-2 items-center justify-center bg-white text-primary p-3 mt-3 rounded-md hover:p-2 cursor-pointer transition-all"
+        >
           <ArrowLeft className="size-5" />
-          <Link href="/" className="outline-none">
-            Return Home
-          </Link>
-        </div>
+          Go Back
+        </button>
       </div>
     </div>
   );
