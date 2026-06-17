@@ -464,7 +464,9 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                     </label>
                   </div>
                   <select className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm">
-                    <option>PDF Set - KES {product.price.toLocaleString()}</option>
+                    <option>
+                      PDF Set - KES {product.price.toLocaleString()}
+                    </option>
                     <option>
                       CAD Files - KES {(product.price + 500).toLocaleString()}
                     </option>
@@ -643,7 +645,7 @@ export default function ProductDetailPage({ id }: ProductDetailProps) {
                   <button
                     key={image.id}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 ${
+                    className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 ${
                       currentImageIndex === idx
                         ? "border-white"
                         : "border-transparent"
