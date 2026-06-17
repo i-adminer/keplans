@@ -58,7 +58,7 @@ function SelectorButton({
         <button
           type="button"
           className={cn(
-            "absolute inset-x-0 h-1/2 cursor-pointer transition-shadow hover:shadow-[0_0_6px_rgba(0,0,0,0.35)] border",
+            "absolute inset-x-0 h-1/2 cursor-pointer transition-shadow hover:shadow-[0_0_6px_rgba(0,0,0,0.35)] border select-none",
             field === "bedrooms" ? "top-0 pb-7" : "bottom-0 pt-7",
           )}
           onClick={() => {
@@ -66,8 +66,8 @@ function SelectorButton({
             onOpen();
           }}
         >
-          <span className="flex flex-col items-center gap-1 text-center">
-            <span className="font-realce sm:text-2xl text-sm font-semibold uppercase">
+          <span className="flex flex-col items-center gap-1 text-center select-none">
+            <span className="font-realce sm:text-2xl text-sm font-semibold uppercase select-none">
               {config.label}, {value ?? 0}
             </span>
           </span>
@@ -148,8 +148,8 @@ export function DonutSelector() {
       />
 
       {/* Center button */}
-      <div className="absolute sm:inset-16 inset-12 z-30 flex cursor-pointer items-center justify-center rounded-full bg-green-500 transition-colors hover:bg-green-400 active:bg-green-200">
-        <span className="font-realce sm:text-5xl max-sm:text-4xl font-black text-white">
+      <div className="absolute sm:inset-16 inset-12 z-30 flex cursor-pointer items-center select-none justify-center rounded-full bg-green-500 transition-colors hover:bg-green-400 active:bg-green-200">
+        <span className="font-realce sm:text-5xl max-sm:text-4xl font-black text-white select-none">
           GO
         </span>
       </div>
