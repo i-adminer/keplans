@@ -5,6 +5,7 @@ import { X, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/cart";
+import { toast } from "sonner";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -145,8 +146,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             </div>
             <button
               onClick={() => {
-                // Handle checkout logic
-                alert("Proceeding to checkout...");
+                toast.success("Proceeding to checkout...");
               }}
               className="w-full py-3 bg-primary cursor-pointer text-white rounded-full font-semibold hover:bg-primary/90 transition-colors"
             >

@@ -5,9 +5,9 @@ import VerifyOtpForm from "@/components/auth/verify-otp-form";
 import { Suspense } from "react";
 
 type VerifyOtpPageProps = {
-  searchParams: {
+  searchParams: Promise<{
     flow?: string | string[];
-  };
+  }>;
 };
 
 export const metadata: Metadata = {
@@ -15,10 +15,11 @@ export const metadata: Metadata = {
   description: "Verify your one-time code.",
 };
 
-export default function VerifyOtpPage({ searchParams }: VerifyOtpPageProps) {
-  const flowValue = Array.isArray(searchParams.flow)
-    ? searchParams.flow[0]
-    : searchParams.flow;
+export default async function VerifyOtpPage({ searchParams }: VerifyOtpPageProps) {
+  const params = await searchParams;
+  const flowValue = Array.isArray(params.flow)
+    ? params.flow[0]
+    : params.flow;
   const flow =
     flowValue === "signup" || flowValue === "reset" ? flowValue : "signin";
 

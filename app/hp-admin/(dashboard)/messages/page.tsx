@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { Search, Send, ArrowLeft, Mail, Phone } from "lucide-react";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -109,7 +110,7 @@ export default function MessagesPage() {
   const handleSendReply = () => {
     if (!replyContent.trim()) return;
     console.log("Sending reply:", replyContent);
-    alert("Reply sent via email!");
+    toast.success("Reply sent via email!");
     setReplyContent("");
   };
 

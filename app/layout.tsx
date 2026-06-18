@@ -4,6 +4,9 @@ import "./globals.css";
 import ThemeProvider from "@/providers/theme-provider";
 import DevConsoleErrorFilter from "@/components/dev-console-error-filter";
 import { CartProvider } from "@/context/cart";
+import { Toaster } from "sonner";
+
+export const dynamic = 'force-dynamic';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -88,6 +91,7 @@ export default function RootLayout({
         <ThemeProvider>
           <CartProvider>{children}</CartProvider>
         </ThemeProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

@@ -1,23 +1,54 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { resetPassword } from "@/app/actions/auth";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    if (!token) {
+      toast.error("Invalid reset link");
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData(event.currentTarget);
+    
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match");
+      setLoading(false);
+      return;
+    }
+
+    formData.append("token", token);
+    const result = await resetPassword(formData);
+
+    if (result.success) {
+      toast.success("Password reset successfully!");
+      router.push("/signin");
+    } else {
+      toast.error(result.error || "Failed to reset password");
+      setLoading(false);
+    }
+  };
 
   return (
-    <form
-      className="space-y-4 sm:space-y-5"
-      onSubmit={(event) => {
-        event.preventDefault();
-        router.push("/signin?reset=success");
-      }}
-    >
+    <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
       <div className="space-y-2">
         <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
           Reset password
@@ -33,6 +64,7 @@ export default function ResetPasswordForm() {
           New password
         </span>
         <Input
+          name="password"
           type="password"
           autoComplete="new-password"
           placeholder="New password"
@@ -47,6 +79,7 @@ export default function ResetPasswordForm() {
           Confirm new password
         </span>
         <Input
+          name="confirmPassword"
           type="password"
           autoComplete="new-password"
           placeholder="Confirm new password"
@@ -61,8 +94,12 @@ export default function ResetPasswordForm() {
         </Link>
       </div>
 
-      <Button type="submit" className="h-10 w-full gap-2 rounded-full max-sm:text-sm">
-        Update password
+      <Button 
+        type="submit" 
+        disabled={loading}
+        className="h-10 w-full gap-2 rounded-full max-sm:text-sm"
+      >
+        {loading ? "Updating..." : "Update password"}
         <ArrowRight className="size-3.5 sm:size-4" />
       </Button>
     </form>

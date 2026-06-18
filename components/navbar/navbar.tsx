@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import ThemeSwitcher from "../theme-switcher";
-import { Heart, ShoppingCart, User, ChevronDown } from "lucide-react";
+import { Heart, ShoppingCart, ChevronDown } from "lucide-react";
 import Logo from "../logo";
 import StylesDropdown, { StylesMobileContent } from "./StylesDropdown";
 import SizesDropdown, { SizesMobileContent } from "./SizesDropdown";
@@ -11,6 +11,7 @@ import Link from "next/link";
 import CartDrawer from "../drawers/cart";
 import WishlistDrawer from "../drawers/wish";
 import { useCart } from "@/context/cart";
+import UserAccountButton from "./user-account-button";
 
 type DropdownType = "styles" | "sizes" | "budget" | null;
 
@@ -132,9 +133,7 @@ const Navbar: React.FC = () => {
                   </span>
                 )}
               </button>
-              <Link href="/signin" aria-label="Open account sign in" onClick={closeDropdowns}>
-                <User className="text-white cursor-pointer size-5 hover:text-gray-200 transition-colors" />
-              </Link>
+              <UserAccountButton />
               <ThemeSwitcher />
 
               {/* Mobile Menu Button */}

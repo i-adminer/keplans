@@ -2,28 +2,72 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Mail } from "lucide-react";
-
+import { ArrowRight, Mail, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { forgotPassword } from "@/app/actions/auth";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    const emailValue = formData.get("email") as string;
+    setEmail(emailValue);
+    
+    const result = await forgotPassword(formData);
+
+    if (result.success) {
+      setEmailSent(true);
+    } else {
+      toast.error(result.error || "Failed to send reset link");
+    }
+    setLoading(false);
+  };
+
+  if (emailSent) {
+    return (
+      <div className="space-y-4 sm:space-y-5 text-center">
+        <div className="flex justify-center">
+          <CheckCircle className="size-16 text-green-600" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
+            Check your email
+          </h2>
+          <p className="text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
+            We've sent a password reset link to <strong>{email}</strong>
+          </p>
+          <p className="text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
+            Click the link in the email to reset your password.
+          </p>
+        </div>
+        <Link href="/signin" className="inline-block">
+          <Button className="h-10 gap-2 rounded-full max-sm:text-sm">
+            Back to sign in
+            <ArrowRight className="size-3.5 sm:size-4" />
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <form
-      className="space-y-4 sm:space-y-5"
-      onSubmit={(event) => {
-        event.preventDefault();
-        router.push("/verify-otp?flow=reset");
-      }}
-    >
+    <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
       <div className="space-y-2">
         <h2 className="font-playfair text-2xl font-semibold tracking-tight sm:text-3xl">
           Forgot password
         </h2>
         <p className="text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
-          Enter your email and we’ll send a one-time code to continue.
+          Enter your email and we'll send a password reset link to continue.
         </p>
       </div>
 
@@ -33,6 +77,7 @@ export default function ForgotPasswordForm() {
           Email address
         </span>
         <Input
+          name="email"
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
@@ -55,9 +100,10 @@ export default function ForgotPasswordForm() {
 
       <Button
         type="submit"
+        disabled={loading}
         className="h-10 w-full gap-2 rounded-full cursor-pointer max-sm:text-sm"
       >
-        Send OTP
+        {loading ? "Sending..." : "Send Reset Link"}
         <ArrowRight className="size-3.5 sm:size-4" />
       </Button>
     </form>

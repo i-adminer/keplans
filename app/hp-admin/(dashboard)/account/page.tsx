@@ -1,19 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ThemeSwitcher from "@/components/theme-switcher";
-import { ArrowLeft, User, Mail, Shield } from "lucide-react";
+import { ArrowLeft, User, Shield } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { getCurrentUser } from "@/app/actions/auth";
+import { changePassword, requestOTP } from "@/app/actions/auth";
 
 export default function AccountPage() {
+  const [admin, setAdmin] = useState<{ firstName: string; lastName: string; email: string } | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [otpSent, setOtpSent] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (user) {
+        setAdmin(user);
+      }
+      setLoading(false);
+    });
+  }, []);
 
   const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -27,34 +42,61 @@ export default function AccountPage() {
     }
   };
 
-  const handleRequestOtp = () => {
+  const handleRequestOtp = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert("Please fill in all password fields");
+      toast.error("Please fill in all password fields");
       return;
     }
     if (newPassword !== confirmPassword) {
-      alert("New passwords don't match");
+      toast.error("New passwords don't match");
       return;
     }
-    setOtpSent(true);
-    alert("OTP sent to your email!");
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+
+    const result = await requestOTP("password_change");
+    if (result.success) {
+      setOtpSent(true);
+      toast.success("OTP sent to your email!");
+    } else {
+      toast.error(result.error || "Failed to send OTP");
+    }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     const otpCode = otp.join("");
     if (otpCode.length !== 4) {
-      alert("Please enter complete OTP");
+      toast.error("Please enter complete OTP");
       return;
     }
-    console.log("Changing password with OTP:", otpCode);
-    alert("Password changed successfully!");
-    setShowPasswordChange(false);
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setOtp(["", "", "", ""]);
-    setOtpSent(false);
+
+    setChangingPassword(true);
+    const formData = new FormData();
+    formData.append("currentPassword", currentPassword);
+    formData.append("newPassword", newPassword);
+    formData.append("otp", otpCode);
+
+    const result = await changePassword(formData);
+    
+    if (result.success) {
+      toast.success("Password changed successfully!");
+      setShowPasswordChange(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setOtp(["", "", "", ""]);
+      setOtpSent(false);
+    } else {
+      toast.error(result.error || "Failed to change password");
+    }
+    setChangingPassword(false);
   };
+
+  if (loading) {
+    return <div className="flex justify-center p-8">Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -87,11 +129,19 @@ export default function AccountPage() {
               <div className="space-y-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Name</label>
-                  <Input value="Admin User" readOnly className="h-10" />
+                  <Input 
+                    value={admin ? `${admin.firstName} ${admin.lastName}` : ""} 
+                    readOnly 
+                    className="h-10" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Email</label>
-                  <Input value="admin@keplans.com" readOnly className="h-10" />
+                  <Input 
+                    value={admin?.email || ""} 
+                    readOnly 
+                    className="h-10" 
+                  />
                 </div>
               </div>
             </div>
@@ -195,8 +245,12 @@ export default function AccountPage() {
                         Send OTP
                       </Button>
                     ) : (
-                      <Button onClick={handleChangePassword} className="flex-1">
-                        Change Password
+                      <Button 
+                        onClick={handleChangePassword} 
+                        disabled={changingPassword}
+                        className="flex-1"
+                      >
+                        {changingPassword ? "Changing..." : "Change Password"}
                       </Button>
                     )}
                   </div>

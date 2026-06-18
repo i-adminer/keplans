@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import { toast } from "sonner";
 import { 
   Home, 
   Images, 
@@ -143,16 +144,16 @@ export default function PlanCreationForm({
 
   const handleSaveDraft = () => {
     localStorage.setItem("planDraft", JSON.stringify(formData));
-    alert("Draft saved!");
+    toast.success("Draft saved!");
   };
 
   const handleSubmit = () => {
     console.log("Submitting:", formData);
     if (mode === "edit") {
       console.log("Updating plan:", planId);
-      alert("Plan updated successfully!");
+      toast.success("Plan updated successfully!");
     } else {
-      alert("Plan created successfully!");
+      toast.success("Plan created successfully!");
     }
   };
 

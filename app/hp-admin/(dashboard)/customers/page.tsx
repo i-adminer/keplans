@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import { Search, Mail, Phone, Package, X, Send, ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -52,10 +53,10 @@ export default function CustomersPage() {
 
   const handleSendMessage = () => {
     if (!messageSubject.trim() || !messageContent.trim()) {
-      alert("Please fill in subject and message");
+      toast.error("Please fill in subject and message");
       return;
     }
-    alert("Message sent via email!");
+    toast.success("Message sent via email!");
     setShowMessageDialog(false);
     setMessageSubject("");
     setMessageContent("");
