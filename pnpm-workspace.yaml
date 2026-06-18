@@ -1,6 +1,7 @@
 allowBuilds:
   esbuild: true
   msw: true
+  node-base64: set this to true or false
   sharp: true
   unrs-resolver: true
 ignoredBuiltDependencies:
