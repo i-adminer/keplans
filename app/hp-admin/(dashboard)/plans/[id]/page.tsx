@@ -113,10 +113,9 @@ export default async function PlanDetailPage({
       {plan.description && (
         <div className="rounded-xl border border-border bg-card p-6">
           <h3 className="text-lg font-semibold mb-4">Description</h3>
-          <div
-            className="prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: plan.description }}
-          />
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {plan.description}
+          </p>
         </div>
       )}
 
@@ -152,19 +151,26 @@ export default async function PlanDetailPage({
         </div>
       )}
 
-      {/* Features and Specs */}
-      {plan.images && plan.images.length > 0 && (
-        <div
-          className="rounded-xl border border-border bg-card p-6"
-          dangerouslySetInnerHTML={{ __html: plan.fullSpecsAndFeatures ?? "" }}
-        />
+      {/* Full Specs & Features */}
+      {plan.fullSpecsAndFeatures && (
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold mb-4">Full Specs & Features</h3>
+          <div
+            className="html-content"
+            dangerouslySetInnerHTML={{ __html: plan.fullSpecsAndFeatures }}
+          />
+        </div>
       )}
 
-      {plan.images && plan.images.length > 0 && (
-        <div
-          className="rounded-xl border border-border bg-card p-6"
-          dangerouslySetInnerHTML={{ __html: plan.fullSpecsAndFeatures ?? "" }}
-        />
+      {/* What's Included */}
+      {plan.includedItemsHTML && (
+        <div className="rounded-xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold mb-4">What's Included</h3>
+          <div
+            className="html-content"
+            dangerouslySetInnerHTML={{ __html: plan.includedItemsHTML }}
+          />
+        </div>
       )}
 
       {/* Documents */}

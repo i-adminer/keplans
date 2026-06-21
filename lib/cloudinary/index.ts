@@ -8,7 +8,7 @@ cloudinary.config({
 
 export async function uploadImage(
   file: File,
-  folder: string = "house-plans"
+  folder: string = "house-plans",
 ): Promise<{ publicId: string; url: string }> {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
@@ -28,7 +28,7 @@ export async function uploadImage(
               publicId: result!.public_id,
               url: result!.secure_url,
             });
-        }
+        },
       )
       .end(buffer);
   });
@@ -36,7 +36,7 @@ export async function uploadImage(
 
 export async function uploadDocument(
   file: File,
-  folder: string = "plan-documents"
+  folder: string = "plan-documents",
 ): Promise<{ publicId: string; url: string; size: number }> {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
@@ -46,7 +46,7 @@ export async function uploadDocument(
       .upload_stream(
         {
           folder,
-          resource_type: "auto",
+          resource_type: "raw",
         },
         (error, result) => {
           if (error) reject(error);
@@ -56,7 +56,7 @@ export async function uploadDocument(
               url: result!.secure_url,
               size: result!.bytes,
             });
-        }
+        },
       )
       .end(buffer);
   });

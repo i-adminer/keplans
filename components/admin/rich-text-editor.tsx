@@ -7,7 +7,6 @@ import {
   Italic,
   List,
   ListOrdered,
-  Heading1,
   Heading2,
   Heading3,
   Undo,
@@ -34,7 +33,7 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm max-w-none min-h-[200px] px-3 py-2 focus:outline-none",
+          "tiptap prose prose-sm max-w-none min-h-[200px] px-3 py-2 focus:outline-none",
       },
     },
   });
@@ -45,33 +44,27 @@ export default function RichTextEditor({
     <div className="rounded-lg border border-border bg-background">
       {/* Toolbar */}
       <div className="flex flex-wrap gap-1 border-b border-border p-2">
+        {/* Undo / Redo */}
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`rounded p-2 hover:bg-accent ${editor.isActive("bold") ? "bg-accent" : ""}`}
-          title="Bold"
+          onClick={() => editor.chain().focus().undo().run()}
+          className="rounded p-2 hover:bg-accent disabled:opacity-30"
+          title="Undo"
         >
-          <Bold className="size-4" />
+          <Undo className="size-4" />
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`rounded p-2 hover:bg-accent ${editor.isActive("italic") ? "bg-accent" : ""}`}
-          title="Italic"
+          onClick={() => editor.chain().focus().redo().run()}
+          className="rounded p-2 hover:bg-accent disabled:opacity-30"
+          title="Redo"
         >
-          <Italic className="size-4" />
+          <Redo className="size-4" />
         </button>
+
         <div className="w-px bg-border" />
-        <button
-          type="button"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          className={`rounded p-2 hover:bg-accent ${editor.isActive("heading", { level: 1 }) ? "bg-accent" : ""}`}
-          title="Heading 1"
-        >
-          <Heading1 className="size-4" />
-        </button>
+
+        {/* Headings */}
         <button
           type="button"
           onClick={() =>
@@ -92,7 +85,30 @@ export default function RichTextEditor({
         >
           <Heading3 className="size-4" />
         </button>
+
         <div className="w-px bg-border" />
+
+        {/* Bold / Italic */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`rounded p-2 hover:bg-accent ${editor.isActive("bold") ? "bg-accent" : ""}`}
+          title="Bold"
+        >
+          <Bold className="size-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`rounded p-2 hover:bg-accent ${editor.isActive("italic") ? "bg-accent" : ""}`}
+          title="Italic"
+        >
+          <Italic className="size-4" />
+        </button>
+
+        <div className="w-px bg-border" />
+
+        {/* Lists */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -108,23 +124,6 @@ export default function RichTextEditor({
           title="Numbered List"
         >
           <ListOrdered className="size-4" />
-        </button>
-        <div className="w-px bg-border" />
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().undo().run()}
-          className="rounded p-2 hover:bg-accent"
-          title="Undo"
-        >
-          <Undo className="size-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          className="rounded p-2 hover:bg-accent"
-          title="Redo"
-        >
-          <Redo className="size-4" />
         </button>
       </div>
 

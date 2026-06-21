@@ -28,6 +28,8 @@ type ImageItem = {
   category: string;
   caption: string;
   previewUrl?: string;
+  cloudinaryPublicId?: string;
+  _deleted?: boolean;
 };
 
 type DocItem = {
@@ -35,6 +37,8 @@ type DocItem = {
   type: string;
   description: string;
   previewUrl?: string;
+  cloudinaryPublicId?: string;
+  _deleted?: boolean;
 };
 
 const STEPS = [
@@ -222,7 +226,7 @@ function DocumentPreview({ doc }: { doc: DocItem }) {
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 underline"
+          className="inline-flex items-center gap-1 font-semibold text-xs text-green-500 hover:text-green-800 underline"
         >
           Open file
         </a>
@@ -231,24 +235,10 @@ function DocumentPreview({ doc }: { doc: DocItem }) {
         <a
           href={url}
           download={fileName}
-          className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 underline"
+          className="inline-flex items-center gap-1 font-semibold text-xs text-green-500 hover:text-green-800 underline"
         >
           Download
         </a>
-
-        {/* PDF inline preview */}
-        {isPDF && (
-          <details className="w-full">
-            <summary className="text-xs text-blue-600 cursor-pointer hover:text-blue-800">
-              Preview inline
-            </summary>
-            <iframe
-              src={url}
-              className="w-full h-64 mt-2 rounded border"
-              title={fileName}
-            />
-          </details>
-        )}
       </div>
     </div>
   );
@@ -266,6 +256,9 @@ export default function PlanCreationForm({
     ...defaultFormData,
     ...(initialData ?? {}),
   });
+
+  const [optionsChanged, setOptionsChanged] = useState(false);
+  const [faqsChanged, setFaqsChanged] = useState(false);
 
   // Load draft on mount
   useEffect(() => {
@@ -332,23 +325,83 @@ export default function PlanCreationForm({
       data.append("topRated", String(formData.topRated));
       data.append("familyPick", String(formData.familyPick));
 
-      // Images
+      // ==================== IMAGES ====================
+      const imagePayload: Array<{
+        id?: string;
+        category: string;
+        caption: string;
+        action: "keep" | "delete" | "new";
+      }> = [];
+
       formData.images.forEach((img) => {
-        if (img.file) {
+        if (img._deleted) {
+          imagePayload.push({
+            id: img.cloudinaryPublicId,
+            category: img.category,
+            caption: img.caption,
+            action: "delete",
+          });
+        } else if (img.file instanceof File) {
           data.append("images", img.file);
           data.append("imageCategories", img.category);
           data.append("imageCaptions", img.caption || "");
+          imagePayload.push({
+            category: img.category,
+            caption: img.caption,
+            action: "new",
+          });
+        } else if (img.previewUrl) {
+          imagePayload.push({
+            id: img.cloudinaryPublicId,
+            category: img.category,
+            caption: img.caption,
+            action: "keep",
+          });
         }
       });
 
-      // Documents
+      data.append("imageActions", JSON.stringify(imagePayload));
+
+      // ==================== DOCUMENTS ====================
+      const docPayload: Array<{
+        id?: string;
+        type: string;
+        description: string;
+        action: "keep" | "delete" | "new";
+      }> = [];
+
       formData.planDocuments.forEach((doc) => {
-        if (doc.file) {
+        if (doc._deleted) {
+          docPayload.push({
+            id: doc.cloudinaryPublicId,
+            type: doc.type,
+            description: doc.description,
+            action: "delete",
+          });
+        } else if (doc.file instanceof File) {
           data.append("documents", doc.file);
           data.append("documentTypes", doc.type);
           data.append("documentDescriptions", doc.description || "");
+          docPayload.push({
+            type: doc.type,
+            description: doc.description,
+            action: "new",
+          });
+        } else if (doc.previewUrl) {
+          docPayload.push({
+            id: doc.cloudinaryPublicId,
+            type: doc.type,
+            description: doc.description,
+            action: "keep",
+          });
         }
       });
+
+      data.append("documentActions", JSON.stringify(docPayload));
+
+      // Options / FAQs changed flags
+      data.append("optionsChanged", String(optionsChanged));
+      data.append("faqsChanged", String(faqsChanged));
 
       // Foundation options
       formData.foundationOptions.forEach((opt) => {
@@ -402,11 +455,17 @@ export default function PlanCreationForm({
         { file: null, category: "exterior", caption: "" },
       ],
     });
-  const removeImage = (i: number) =>
-    setFormData({
-      ...formData,
-      images: formData.images.filter((_, idx) => idx !== i),
-    });
+
+  const removeImage = (i: number) => {
+    const imgs = [...formData.images];
+    if (imgs[i].previewUrl) {
+      imgs[i]._deleted = true;
+    } else {
+      imgs.splice(i, 1);
+    }
+    setFormData({ ...formData, images: imgs });
+  };
+
   const handleImageFile = (i: number, file: File | null) => {
     const imgs = [...formData.images];
     imgs[i].file = file;
@@ -421,18 +480,24 @@ export default function PlanCreationForm({
         { file: null, type: "pdf", description: "" },
       ],
     });
-  const removeDocument = (i: number) =>
-    setFormData({
-      ...formData,
-      planDocuments: formData.planDocuments.filter((_, idx) => idx !== i),
-    });
+
+  const removeDocument = (i: number) => {
+    const docs = [...formData.planDocuments];
+    if (docs[i].previewUrl) {
+      docs[i]._deleted = true;
+    } else {
+      docs.splice(i, 1);
+    }
+    setFormData({ ...formData, planDocuments: docs });
+  };
+
   const handleDocumentFile = (i: number, file: File | null) => {
     const docs = [...formData.planDocuments];
     docs[i].file = file;
     setFormData({ ...formData, planDocuments: docs });
   };
 
-  const addFoundation = () =>
+  const addFoundation = () => {
     setFormData({
       ...formData,
       foundationOptions: [
@@ -440,16 +505,22 @@ export default function PlanCreationForm({
         { label: "", price: "", description: "" },
       ],
     });
-  const addAddon = () =>
+    setOptionsChanged(true);
+  };
+  const addAddon = () => {
     setFormData({
       ...formData,
       addOns: [...formData.addOns, { label: "", price: "", description: "" }],
     });
-  const addFAQ = () =>
+    setOptionsChanged(true);
+  };
+  const addFAQ = () => {
     setFormData({
       ...formData,
       faqs: [...formData.faqs, { question: "", answer: "" }],
     });
+    setFaqsChanged(true);
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -753,70 +824,76 @@ export default function PlanCreationForm({
                 Gallery images (exterior, interior, floor plans, 3D)
               </p>
 
-              {formData.images.map((image, i) => (
-                <div
-                  key={i}
-                  className="mb-4 rounded-lg border border-border bg-card p-4"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-sm font-medium">Image {i + 1}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeImage(i)}
-                      className="text-destructive"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="space-y-2">
-                      <label className="text-sm">File *</label>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) =>
-                          handleImageFile(i, e.target.files?.[0] || null)
-                        }
-                        className="h-10"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm">Category *</label>
-                      <select
-                        value={image.category}
-                        onChange={(e) => {
-                          const imgs = [...formData.images];
-                          imgs[i].category = e.target.value;
-                          setFormData({ ...formData, images: imgs });
+              {formData.images.map((image, i) => {
+                if (image._deleted) return null;
+                return (
+                  <div
+                    key={i}
+                    className="mb-4 rounded-lg border border-border bg-card p-4"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <span className="text-sm font-medium">Image {i + 1}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeImage(i);
                         }}
-                        className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+                        className="text-destructive"
                       >
-                        {IMAGE_CATEGORIES.map((cat) => (
-                          <option key={cat} value={cat}>
-                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                          </option>
-                        ))}
-                      </select>
+                        <X className="size-4" />
+                      </button>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm">Caption</label>
-                      <Input
-                        placeholder="Front Elevation"
-                        value={image.caption}
-                        onChange={(e) => {
-                          const imgs = [...formData.images];
-                          imgs[i].caption = e.target.value;
-                          setFormData({ ...formData, images: imgs });
-                        }}
-                        className="h-10"
-                      />
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <div className="space-y-2">
+                        <label className="text-sm">File *</label>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) =>
+                            handleImageFile(i, e.target.files?.[0] || null)
+                          }
+                          className="h-10"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm">Category *</label>
+                        <select
+                          value={image.category}
+                          onChange={(e) => {
+                            const imgs = [...formData.images];
+                            imgs[i].category = e.target.value;
+                            setFormData({ ...formData, images: imgs });
+                          }}
+                          className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+                        >
+                          {IMAGE_CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm">Caption</label>
+                        <Input
+                          placeholder="Front Elevation"
+                          value={image.caption}
+                          onChange={(e) => {
+                            const imgs = [...formData.images];
+                            imgs[i].caption = e.target.value;
+                            setFormData({ ...formData, images: imgs });
+                          }}
+                          className="h-10"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <ImagePreview image={image} />
                     </div>
                   </div>
-                  <div className="mt-3">
-                    <ImagePreview image={image} />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
 
               <Button
                 type="button"
@@ -841,66 +918,75 @@ export default function PlanCreationForm({
                 purchase.
               </p>
 
-              {formData.planDocuments.map((doc, i) => (
-                <div
-                  key={i}
-                  className="mb-4 rounded-lg border border-border bg-card p-4"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-sm font-medium">
-                      Document {i + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeDocument(i)}
-                      className="text-destructive"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <label className="text-sm">Type *</label>
-                      <select
-                        value={doc.type}
-                        onChange={(e) => {
-                          const docs = [...formData.planDocuments];
-                          docs[i].type = e.target.value;
-                          setFormData({ ...formData, planDocuments: docs });
-                        }}
-                        className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+              {formData.planDocuments.map((doc, i) => {
+                if (doc._deleted) return null;
+                return (
+                  <div
+                    key={i}
+                    className="mb-4 rounded-lg border border-border bg-card p-4"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <span className="text-sm font-medium">
+                        Document {i + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeDocument(i)}
+                        className="text-destructive"
                       >
-                        {DOCUMENT_TYPES.map((type) => (
-                          <option key={type.value} value={type.value}>
-                            {type.label}
-                          </option>
-                        ))}
-                      </select>
+                        <X className="size-4" />
+                      </button>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm">File *</label>
-                      <Input type="file" className="h-10" />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <label className="text-sm">Type *</label>
+                        <select
+                          value={doc.type}
+                          onChange={(e) => {
+                            const docs = [...formData.planDocuments];
+                            docs[i].type = e.target.value;
+                            setFormData({ ...formData, planDocuments: docs });
+                          }}
+                          className="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+                        >
+                          {DOCUMENT_TYPES.map((type) => (
+                            <option key={type.value} value={type.value}>
+                              {type.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm">File *</label>
+                        <Input
+                          type="file"
+                          onChange={(e) =>
+                            handleDocumentFile(i, e.target.files?.[0] || null)
+                          }
+                          className="h-10"
+                        />
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <label className="text-sm">Description</label>
+                        <Input
+                          placeholder="Additional details"
+                          value={doc.description}
+                          onChange={(e) => {
+                            const docs = [...formData.planDocuments];
+                            docs[i].description = e.target.value;
+                            setFormData({ ...formData, planDocuments: docs });
+                          }}
+                          className="h-10"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2 sm:col-span-2">
-                      <label className="text-sm">Description</label>
-                      <Input
-                        placeholder="Additional details"
-                        value={doc.description}
-                        onChange={(e) => {
-                          const docs = [...formData.planDocuments];
-                          docs[i].description = e.target.value;
-                          setFormData({ ...formData, planDocuments: docs });
-                        }}
-                        className="h-10"
-                      />
+                    {/* Document Preview  */}
+                    <div className="mt-3">
+                      <DocumentPreview doc={doc} />
                     </div>
                   </div>
-                  {/* Document Preview  */}
-                  <div className="mt-3">
-                    <DocumentPreview doc={doc} />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
 
               <Button
                 type="button"
@@ -989,6 +1075,7 @@ export default function PlanCreationForm({
                       const opts = [...formData.foundationOptions];
                       opts[i].label = e.target.value;
                       setFormData({ ...formData, foundationOptions: opts });
+                      setOptionsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1000,6 +1087,7 @@ export default function PlanCreationForm({
                       const opts = [...formData.foundationOptions];
                       opts[i].price = e.target.value;
                       setFormData({ ...formData, foundationOptions: opts });
+                      setOptionsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1010,6 +1098,7 @@ export default function PlanCreationForm({
                       const opts = [...formData.foundationOptions];
                       opts[i].description = e.target.value;
                       setFormData({ ...formData, foundationOptions: opts });
+                      setOptionsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1039,6 +1128,7 @@ export default function PlanCreationForm({
                       const addons = [...formData.addOns];
                       addons[i].label = e.target.value;
                       setFormData({ ...formData, addOns: addons });
+                      setOptionsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1050,6 +1140,7 @@ export default function PlanCreationForm({
                       const addons = [...formData.addOns];
                       addons[i].price = e.target.value;
                       setFormData({ ...formData, addOns: addons });
+                      setOptionsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1060,6 +1151,7 @@ export default function PlanCreationForm({
                       const addons = [...formData.addOns];
                       addons[i].description = e.target.value;
                       setFormData({ ...formData, addOns: addons });
+                      setOptionsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1126,6 +1218,7 @@ export default function PlanCreationForm({
                       const faqs = [...formData.faqs];
                       faqs[i].question = e.target.value;
                       setFormData({ ...formData, faqs });
+                      setFaqsChanged(true);
                     }}
                     className="h-10"
                   />
@@ -1136,6 +1229,7 @@ export default function PlanCreationForm({
                       const faqs = [...formData.faqs];
                       faqs[i].answer = e.target.value;
                       setFormData({ ...formData, faqs });
+                      setFaqsChanged(true);
                     }}
                     className="min-h-20 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
                   />
@@ -1208,27 +1302,48 @@ export default function PlanCreationForm({
             variant="outline"
             onClick={handlePrev}
             disabled={currentStep === 1 || isSubmitting}
-            className="w-full sm:w-auto order-2 sm:order-1"
+            className="w-full sm:w-auto order-2 sm:order-1 cursor-pointer"
           >
             <ChevronLeft className="size-4 mr-2" />
             Previous
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleSaveDraft}
-            disabled={isSubmitting}
-            className="w-full sm:w-auto order-1 sm:order-2"
-          >
-            <Save className="size-4 mr-2" />
-            Save Draft
-          </Button>
+
+          {mode === "edit" ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={`w-full sm:w-auto order-1 sm:order-2 cursor-pointer border border-border hover:bg-amber-50/10 ${currentStep === 6 && "hidden"}`}
+            >
+              {isSubmitting ? (
+                <>Loading...</>
+              ) : (
+                <>
+                  <Save className="size-4 mr-2" />
+                  Update Plan
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleSaveDraft}
+              disabled={isSubmitting}
+              className="w-full sm:w-auto order-1 sm:order-2"
+            >
+              <Save className="size-4 mr-2" />
+              Save Draft
+            </Button>
+          )}
+
           {currentStep < STEPS.length ? (
             <Button
               type="button"
               onClick={handleNext}
               disabled={isSubmitting}
-              className="w-full sm:w-auto order-3"
+              className="w-full sm:w-auto order-3 cursor-pointer"
             >
               Next
               <ChevronRight className="size-4 ml-2" />
@@ -1238,7 +1353,7 @@ export default function PlanCreationForm({
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="w-full sm:w-auto order-3"
+              className="w-full sm:w-auto order-3 cursor-pointer"
             >
               {isSubmitting ? (
                 <>Loading...</>

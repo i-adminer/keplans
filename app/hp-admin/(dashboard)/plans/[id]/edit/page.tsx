@@ -56,21 +56,19 @@ export default async function EditPlanPage({
     familyPick: plan.familyPick ?? false,
 
     images: (plan.images ?? []).map((img: any) => ({
-      id: img.id,
       file: null,
-      previewUrl: img.cloudinaryUrl,
       category: img.category,
       caption: img.caption ?? "",
+      previewUrl: img.cloudinaryUrl,
+      cloudinaryPublicId: img.cloudinaryPublicId,
     })),
-
     planDocuments: (plan.documents ?? []).map((doc: any) => ({
-      id: doc.id,
       file: null,
-      previewUrl: doc.cloudinaryUrl,
-      type: doc.type ?? "pdf",
+      type: doc.documentType,
       description: doc.description ?? "",
+      previewUrl: doc.cloudinaryUrl,
+      cloudinaryPublicId: doc.cloudinaryPublicId,
     })),
-
     foundationOptions: (plan.options ?? [])
       .filter((o: any) => o.type === "foundation")
       .map((o: any) => ({

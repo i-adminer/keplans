@@ -17,6 +17,22 @@ import {
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
+// ---------- Types for image/document actions ----------
+type ImagePayload = {
+  id?: string;
+  category: string;
+  caption: string;
+  action: "keep" | "delete" | "new";
+};
+
+type DocumentPayload = {
+  id?: string;
+  type: string;
+  description: string;
+  action: "keep" | "delete" | "new";
+};
+
+// ---------- Helpers ----------
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -24,6 +40,68 @@ function generateSlug(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
+// ---------- Shared helpers for options & FAQs ----------
+async function saveOptions(planId: string, formData: FormData) {
+  const foundationLabels = formData.getAll("foundationLabels") as string[];
+  const foundationPrices = formData.getAll("foundationPrices") as string[];
+  const foundationDescriptions = formData.getAll(
+    "foundationDescriptions",
+  ) as string[];
+
+  for (let i = 0; i < foundationLabels.length; i++) {
+    if (foundationLabels[i]) {
+      await db.insert(planOptions).values({
+        id: nanoid(),
+        planId,
+        optionType: "foundation",
+        label: foundationLabels[i],
+        price: foundationPrices[i] || "0",
+        description: foundationDescriptions[i] || null,
+        sortOrder: i,
+        createdAt: new Date(),
+      });
+    }
+  }
+
+  const addonLabels = formData.getAll("addonLabels") as string[];
+  const addonPrices = formData.getAll("addonPrices") as string[];
+  const addonDescriptions = formData.getAll("addonDescriptions") as string[];
+
+  for (let i = 0; i < addonLabels.length; i++) {
+    if (addonLabels[i]) {
+      await db.insert(planOptions).values({
+        id: nanoid(),
+        planId,
+        optionType: "addon",
+        label: addonLabels[i],
+        price: addonPrices[i] || "0",
+        description: addonDescriptions[i] || null,
+        sortOrder: i,
+        createdAt: new Date(),
+      });
+    }
+  }
+}
+
+async function saveFaqs(planId: string, formData: FormData) {
+  const faqQuestions = formData.getAll("faqQuestions") as string[];
+  const faqAnswers = formData.getAll("faqAnswers") as string[];
+
+  for (let i = 0; i < faqQuestions.length; i++) {
+    if (faqQuestions[i]) {
+      await db.insert(planFaqs).values({
+        id: nanoid(),
+        planId,
+        question: faqQuestions[i],
+        answer: faqAnswers[i] || "",
+        sortOrder: i,
+        createdAt: new Date(),
+      });
+    }
+  }
+}
+
+// ---------- CREATE  ----------
 export async function createPlan(formData: FormData) {
   try {
     const planId = nanoid();
@@ -96,13 +174,7 @@ export async function createPlan(formData: FormData) {
       "documentDescriptions",
     ) as string[];
 
-    console.log("Documents to upload:", documentFiles.length);
     for (let i = 0; i < documentFiles.length; i++) {
-      console.log(
-        `Document ${i}:`,
-        documentFiles[i]?.name,
-        documentFiles[i]?.size,
-      );
       if (documentFiles[i] && documentFiles[i].size > 0) {
         const file = documentFiles[i];
         const { publicId, url, size } = await uploadDocument(
@@ -121,68 +193,12 @@ export async function createPlan(formData: FormData) {
           description: documentDescriptions[i] || null,
           createdAt: new Date(),
         });
-        console.log("Document uploaded:", file.name);
       }
     }
 
-    // 4. Save foundation options
-    const foundationLabels = formData.getAll("foundationLabels") as string[];
-    const foundationPrices = formData.getAll("foundationPrices") as string[];
-    const foundationDescriptions = formData.getAll(
-      "foundationDescriptions",
-    ) as string[];
-
-    for (let i = 0; i < foundationLabels.length; i++) {
-      if (foundationLabels[i]) {
-        await db.insert(planOptions).values({
-          id: nanoid(),
-          planId,
-          optionType: "foundation",
-          label: foundationLabels[i],
-          price: foundationPrices[i] || "0",
-          description: foundationDescriptions[i] || null,
-          sortOrder: i,
-          createdAt: new Date(),
-        });
-      }
-    }
-
-    // 5. Save add-ons
-    const addonLabels = formData.getAll("addonLabels") as string[];
-    const addonPrices = formData.getAll("addonPrices") as string[];
-    const addonDescriptions = formData.getAll("addonDescriptions") as string[];
-
-    for (let i = 0; i < addonLabels.length; i++) {
-      if (addonLabels[i]) {
-        await db.insert(planOptions).values({
-          id: nanoid(),
-          planId,
-          optionType: "addon",
-          label: addonLabels[i],
-          price: addonPrices[i] || "0",
-          description: addonDescriptions[i] || null,
-          sortOrder: i,
-          createdAt: new Date(),
-        });
-      }
-    }
-
-    // 6. Save FAQs
-    const faqQuestions = formData.getAll("faqQuestions") as string[];
-    const faqAnswers = formData.getAll("faqAnswers") as string[];
-
-    for (let i = 0; i < faqQuestions.length; i++) {
-      if (faqQuestions[i]) {
-        await db.insert(planFaqs).values({
-          id: nanoid(),
-          planId,
-          question: faqQuestions[i],
-          answer: faqAnswers[i] || "",
-          sortOrder: i,
-          createdAt: new Date(),
-        });
-      }
-    }
+    // 4. Save options & FAQs
+    await saveOptions(planId, formData);
+    await saveFaqs(planId, formData);
 
     revalidatePath("/hp-admin/plans");
     return { success: true, planId };
@@ -192,52 +208,212 @@ export async function createPlan(formData: FormData) {
   }
 }
 
+// ---------- UPDATE  ----------
 export async function updatePlan(planId: string, formData: FormData) {
   try {
-    const name = formData.get("name") as string;
-    const slug = generateSlug(name);
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
 
-    // Update main plan
-    await db
-      .update(housePlans)
-      .set({
-        planNumber: formData.get("planNumber") as string,
-        name,
-        slug,
-        style: formData.get("style") as string,
-        summary: formData.get("summary") as string,
-        description: formData.get("description") as string,
-        bedrooms: parseInt(formData.get("bedrooms") as string),
-        baths: formData.get("baths") as string,
-        floors: parseInt(formData.get("floors") as string),
-        garages: parseInt(formData.get("garages") as string) || 0,
-        sqft: parseInt(formData.get("sqft") as string),
-        width: formData.get("width") as string,
-        depth: formData.get("depth") as string,
-        mainFloorArea:
-          parseInt(formData.get("mainFloorArea") as string) || null,
-        basementArea: parseInt(formData.get("basementArea") as string) || null,
-        porchArea: parseInt(formData.get("porchArea") as string) || null,
-        basePrice: formData.get("basePrice") as string,
-        pdfPrice: formData.get("pdfPrice") as string,
-        cadPrice: formData.get("cadPrice") as string,
-        unlimitedBuildPrice: formData.get("unlimitedBuildPrice") as string,
-        fullSpecsAndFeatures: formData.get("fullSpecsAndFeatures") as string,
-        includedItemsHTML: formData.get("includedItemsHTML") as string,
-        badge: formData.get("badge") as string,
-        featured: formData.get("featured") === "true",
-        trending: formData.get("trending") === "true",
-        topRated: formData.get("topRated") === "true",
-        familyPick: formData.get("familyPick") === "true",
-        updatedAt: new Date(),
-      })
-      .where(eq(housePlans.id, planId));
+    const stringFields = [
+      "planNumber",
+      "name",
+      "summary",
+      "description",
+      "style",
+      "baths",
+      "badge",
+      "width",
+      "depth",
+      "basePrice",
+      "pdfPrice",
+      "cadPrice",
+      "unlimitedBuildPrice",
+      "fullSpecsAndFeatures",
+      "includedItemsHTML",
+    ];
+    for (const field of stringFields) {
+      const value = formData.get(field);
+      if (value !== null) updates[field] = value as string;
+    }
+
+    // Numeric fields
+    const numericFields = [
+      "bedrooms",
+      "floors",
+      "garages",
+      "sqft",
+      "mainFloorArea",
+      "basementArea",
+      "porchArea",
+    ];
+    for (const field of numericFields) {
+      const value = formData.get(field);
+      if (value !== null) {
+        updates[field] = parseInt(value as string) || null;
+      }
+    }
+
+    // Boolean flags
+    ["featured", "trending", "topRated", "familyPick"].forEach((field) => {
+      const value = formData.get(field);
+      if (value !== null) updates[field] = value === "true";
+    });
+
+    // Name changed → update slug
+    if (updates.name) {
+      updates.slug = generateSlug(updates.name as string);
+    }
+
+    // Only run update if there's something besides updatedAt
+    if (Object.keys(updates).length > 1) {
+      await db.update(housePlans).set(updates).where(eq(housePlans.id, planId));
+    }
+
+    // --- 2. Process images (keep/delete/new) ---
+    const imageActionsJson = formData.get("imageActions") as string;
+    if (imageActionsJson) {
+      const imagePayload: ImagePayload[] = JSON.parse(imageActionsJson);
+      await processImages(planId, imagePayload, formData);
+    }
+
+    // --- 3. Process documents (keep/delete/new) ---
+    const docActionsJson = formData.get("documentActions") as string;
+    if (docActionsJson) {
+      const docPayload: DocumentPayload[] = JSON.parse(docActionsJson);
+      await processDocuments(planId, docPayload, formData);
+    }
+
+    // --- 4. Options – only replace if changed flag is true ---
+    if (formData.get("optionsChanged") === "true") {
+      await db.delete(planOptions).where(eq(planOptions.planId, planId));
+      await saveOptions(planId, formData);
+    }
+
+    // --- 5. FAQs – only replace if changed flag is true ---
+    if (formData.get("faqsChanged") === "true") {
+      await db.delete(planFaqs).where(eq(planFaqs.planId, planId));
+      await saveFaqs(planId, formData);
+    }
 
     revalidatePath("/hp-admin/plans");
     return { success: true };
   } catch (error) {
     console.error("Update plan error:", error);
     return { error: "Failed to update plan" };
+  }
+}
+
+// ---------- Image processor ----------
+async function processImages(
+  planId: string,
+  payload: ImagePayload[],
+  formData: FormData,
+) {
+  const newFiles = formData.getAll("images") as File[];
+  const newCategories = formData.getAll("imageCategories") as string[];
+  const newCaptions = formData.getAll("imageCaptions") as string[];
+  let newIndex = 0;
+
+  for (const item of payload) {
+    switch (item.action) {
+      case "delete":
+        if (item.id) {
+          await deleteFile(item.id);
+          await db
+            .delete(planImages)
+            .where(eq(planImages.cloudinaryPublicId, item.id));
+        }
+        break;
+
+      case "keep":
+        if (item.id) {
+          // Update caption/category if changed (optional)
+          await db
+            .update(planImages)
+            .set({ category: item.category, caption: item.caption || null })
+            .where(eq(planImages.cloudinaryPublicId, item.id));
+        }
+        break;
+
+      case "new":
+        if (newFiles[newIndex] && newFiles[newIndex].size > 0) {
+          const { publicId, url } = await uploadImage(
+            newFiles[newIndex],
+            `house-plans/${planId}`,
+          );
+          await db.insert(planImages).values({
+            id: nanoid(),
+            planId,
+            cloudinaryPublicId: publicId,
+            cloudinaryUrl: url,
+            category: newCategories[newIndex] || item.category,
+            caption: newCaptions[newIndex] || item.caption || null,
+            sortOrder: 99, // appended at end
+            createdAt: new Date(),
+          });
+        }
+        newIndex++;
+        break;
+    }
+  }
+}
+
+// ---------- Document processor ----------
+async function processDocuments(
+  planId: string,
+  payload: DocumentPayload[],
+  formData: FormData,
+) {
+  const newFiles = formData.getAll("documents") as File[];
+  const newTypes = formData.getAll("documentTypes") as string[];
+  const newDescriptions = formData.getAll("documentDescriptions") as string[];
+  let newIndex = 0;
+
+  for (const item of payload) {
+    switch (item.action) {
+      case "delete":
+        if (item.id) {
+          await deleteFile(item.id);
+          await db
+            .delete(planDocuments)
+            .where(eq(planDocuments.cloudinaryPublicId, item.id));
+        }
+        break;
+
+      case "keep":
+        if (item.id) {
+          await db
+            .update(planDocuments)
+            .set({
+              documentType: item.type,
+              description: item.description || null,
+            })
+            .where(eq(planDocuments.cloudinaryPublicId, item.id));
+        }
+        break;
+
+      case "new":
+        if (newFiles[newIndex] && newFiles[newIndex].size > 0) {
+          const file = newFiles[newIndex];
+          const { publicId, url, size } = await uploadDocument(
+            file,
+            `plan-documents/${planId}`,
+          );
+          await db.insert(planDocuments).values({
+            id: nanoid(),
+            planId,
+            documentType: newTypes[newIndex] || item.type,
+            fileName: file.name,
+            cloudinaryPublicId: publicId,
+            cloudinaryUrl: url,
+            fileSize: size,
+            mimeType: file.type,
+            description: newDescriptions[newIndex] || item.description || null,
+            createdAt: new Date(),
+          });
+        }
+        newIndex++;
+        break;
+    }
   }
 }
 
