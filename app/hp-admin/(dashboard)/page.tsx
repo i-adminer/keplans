@@ -2,6 +2,7 @@ import { Home, Package, MessageSquare, Users, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
+import { getDashboardStats, getRecentOrders, getRecentMessages } from "@/app/actions/dashboard";
 
 export const metadata: Metadata = {
   title: "Dashboard - KEPlans Admin",
@@ -12,31 +13,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AdminDashboardPage() {
-  // Dummy stats with links
-  const stats = [
-    { label: "Total Plans", value: "127", icon: Home, change: "+12%", link: "/hp-admin/plans" },
-    { label: "Active Orders", value: "45", icon: Package, change: "+8%", link: "/hp-admin/orders" },
-    { label: "Unread Messages", value: "23", icon: MessageSquare, change: "+5%", link: "/hp-admin/messages" },
-    { label: "Total Customers", value: "1,429", icon: Users, change: "+18%", link: "/hp-admin/customers" },
-  ];
+export const revalidate = 0; // Don't cache
 
-  // Dummy orders
-  const recentOrders = [
-    { id: "ORD-2045", customer: "John Kamau", plan: "Kenya Court Modern", amount: 128000, status: "completed" },
-    { id: "ORD-2044", customer: "Mary Wanjiku", plan: "Ridge View Contemporary", amount: 184000, status: "pending" },
-    { id: "ORD-2043", customer: "Peter Ochieng", plan: "Nairobi Breeze Farmhouse", amount: 216000, status: "completed" },
-    { id: "ORD-2042", customer: "Grace Akinyi", plan: "Savanna Modern Villa", amount: 310000, status: "pending" },
-    { id: "ORD-2041", customer: "David Mwangi", plan: "Lake View Traditional", amount: 175000, status: "canceled" },
-  ];
+export default async function AdminDashboardPage() {
+  const stats = await getDashboardStats();
+  const recentOrders = await getRecentOrders(5);
+  const recentMessages = await getRecentMessages(5);
 
-  // Dummy messages
-  const recentMessages = [
-    { id: "1", sender: "James Kipchoge", subject: "Question about plan modifications", time: "2 min ago", unread: true },
-    { id: "2", sender: "Sarah Njeri", subject: "Foundation options inquiry", time: "1 hour ago", unread: true },
-    { id: "3", sender: "Tom Omondi", subject: "CAD files request", time: "3 hours ago", unread: false },
-    { id: "4", sender: "Lucy Wangari", subject: "Payment confirmation", time: "5 hours ago", unread: false },
-    { id: "5", sender: "Mike Rotich", subject: "Custom design consultation", time: "1 day ago", unread: true },
+  const statCards = [
+    { label: "Total Plans", value: stats.totalPlans, icon: Home, link: "/hp-admin/plans" },
+    { label: "Active Orders", value: stats.activeOrders, icon: Package, link: "/hp-admin/orders" },
+    { label: "Unread Messages", value: stats.unreadMessages, icon: MessageSquare, link: "/hp-admin/messages" },
+    { label: "Total Customers", value: stats.totalCustomers, icon: Users, link: "/hp-admin/customers" },
   ];
 
   return (
@@ -56,7 +44,7 @@ export default function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
+        {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <Link
@@ -68,12 +56,9 @@ export default function AdminDashboardPage() {
                 <div className="rounded-full bg-primary/10 p-2">
                   <Icon className="size-5 text-foreground" />
                 </div>
-                <span className="text-xs font-medium text-green-600 dark:text-green-400">
-                  {stat.change}
-                </span>
               </div>
               <div className="mt-4">
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-2xl font-bold">{stat.value.toLocaleString()}</div>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
               </div>
             </Link>

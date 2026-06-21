@@ -343,6 +343,13 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const messagesRelations = relations(messages, ({ one }) => ({
+  customer: one(users, {
+    fields: [messages.customerId],
+    references: [users.id],
+  }),
+}));
+
 // ============================================================================
 // COUPONS
 // ============================================================================
@@ -412,6 +419,34 @@ export const housePlansRelations = relations(housePlans, ({ many }) => ({
   cartItems: many(cartItems),
   wishlistItems: many(wishlistItems),
   orderItems: many(orderItems),
+}));
+
+export const planImagesRelations = relations(planImages, ({ one }) => ({
+  plan: one(housePlans, {
+    fields: [planImages.planId],
+    references: [housePlans.id],
+  }),
+}));
+
+export const planDocumentsRelations = relations(planDocuments, ({ one }) => ({
+  plan: one(housePlans, {
+    fields: [planDocuments.planId],
+    references: [housePlans.id],
+  }),
+}));
+
+export const planOptionsRelations = relations(planOptions, ({ one }) => ({
+  plan: one(housePlans, {
+    fields: [planOptions.planId],
+    references: [housePlans.id],
+  }),
+}));
+
+export const planFaqsRelations = relations(planFaqs, ({ one }) => ({
+  plan: one(housePlans, {
+    fields: [planFaqs.planId],
+    references: [housePlans.id],
+  }),
 }));
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({

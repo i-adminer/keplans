@@ -19,6 +19,7 @@ export default function AccountPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [otpSent, setOtpSent] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
@@ -56,13 +57,15 @@ export default function AccountPage() {
       return;
     }
 
+    setSendingOtp(true);
     const result = await requestOTP("password_change");
-    if (result.success) {
+    if ("success" in result && result.success) {
       setOtpSent(true);
       toast.success("OTP sent to your email!");
     } else {
-      toast.error(result.error || "Failed to send OTP");
+      toast.error("error" in result ? result.error : "Failed to send OTP");
     }
+    setSendingOtp(false);
   };
 
   const handleChangePassword = async () => {
@@ -80,7 +83,7 @@ export default function AccountPage() {
 
     const result = await changePassword(formData);
     
-    if (result.success) {
+    if ("success" in result && result.success) {
       toast.success("Password changed successfully!");
       setShowPasswordChange(false);
       setCurrentPassword("");
@@ -89,7 +92,7 @@ export default function AccountPage() {
       setOtp(["", "", "", ""]);
       setOtpSent(false);
     } else {
-      toast.error(result.error || "Failed to change password");
+      toast.error("error" in result ? result.error : "Failed to change password");
     }
     setChangingPassword(false);
   };
@@ -241,8 +244,8 @@ export default function AccountPage() {
                       Cancel
                     </Button>
                     {!otpSent ? (
-                      <Button onClick={handleRequestOtp} className="flex-1">
-                        Send OTP
+                      <Button onClick={handleRequestOtp} disabled={sendingOtp} className="flex-1">
+                        {sendingOtp ? "Sending..." : "Send OTP"}
                       </Button>
                     ) : (
                       <Button 

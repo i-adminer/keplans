@@ -1,11 +1,17 @@
 import AllPlansTable from "@/components/admin/all-plans-table";
+import { getAllPlans } from "@/app/actions/plans";
 
 export const metadata = {
   title: "All Plans | KEPlans Admin",
   description: "Manage house plans",
 };
 
-export default function AllPlansPage() {
+export const revalidate = 0; // Don't cache
+
+export default async function AllPlansPage() {
+  const result = await getAllPlans();
+  const plans = result.success ? result.plans : [];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -17,7 +23,7 @@ export default function AllPlansPage() {
         </div>
       </div>
 
-      <AllPlansTable />
+      <AllPlansTable plans={plans} />
     </div>
   );
 }

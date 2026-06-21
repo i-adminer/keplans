@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { planCatalog } from "@/lib/plans-data";
 import {
   Edit,
   Trash2,
@@ -16,6 +15,13 @@ import {
   Search,
   X,
 } from "lucide-react";
+import {
+  publishPlan,
+  unpublishPlan,
+  deletePlan as deletePlanAction,
+} from "@/app/actions/plans";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const HOUSE_STYLES = [
   "Modern",
@@ -35,18 +41,29 @@ const ITEMS_PER_PAGE = 10;
 interface Plan {
   id: string;
   name: string;
+  planNumber: string;
   style: string;
-  price: number;
+  basePrice: string;
   bedrooms: number;
-  baths: number;
+  baths: string;
   floors: number;
-  area: number;
-  image: string;
-  published?: boolean;
-  featured?: boolean;
+  sqft: number;
+  published: boolean;
+  featured: boolean;
+  images?: Array<{
+    id: string;
+    cloudinaryUrl: string;
+    category: string;
+    caption: string | null;
+  }>;
 }
 
-export default function AllPlansTable() {
+interface AllPlansTableProps {
+  plans: Plan[];
+}
+
+export default function AllPlansTable({ plans }: AllPlansTableProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [styleFilter, setStyleFilter] = useState("");
   const [bedroomsFilter, setBedroomsFilter] = useState("");
@@ -54,11 +71,7 @@ export default function AllPlansTable() {
   const [areaFilter, setAreaFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Add published status to plans
-  const [plans, setPlans] = useState<Plan[]>(
-    planCatalog.map((p) => ({ ...p, published: true }))
-  );
+  const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
 
   // Filter logic
   const filteredPlans = useMemo(() => {
@@ -67,7 +80,7 @@ export default function AllPlansTable() {
       if (
         searchQuery &&
         !plan.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !plan.id.toLowerCase().includes(searchQuery.toLowerCase())
+        !plan.planNumber.toLowerCase().includes(searchQuery.toLowerCase())
       ) {
         return false;
       }
@@ -78,7 +91,10 @@ export default function AllPlansTable() {
       // Bedrooms
       if (bedroomsFilter) {
         if (bedroomsFilter === "5plus" && plan.bedrooms < 5) return false;
-        if (bedroomsFilter !== "5plus" && plan.bedrooms !== Number(bedroomsFilter))
+        if (
+          bedroomsFilter !== "5plus" &&
+          plan.bedrooms !== Number(bedroomsFilter)
+        )
           return false;
       }
 
@@ -91,7 +107,7 @@ export default function AllPlansTable() {
 
       // Area
       if (areaFilter) {
-        const area = plan.area;
+        const area = plan.sqft;
         if (areaFilter === "under-100" && area >= 100) return false;
         if (areaFilter === "100-200" && (area < 100 || area >= 200))
           return false;
@@ -122,20 +138,44 @@ export default function AllPlansTable() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedPlans = filteredPlans.slice(
     startIndex,
-    startIndex + ITEMS_PER_PAGE
+    startIndex + ITEMS_PER_PAGE,
   );
 
   // Actions
-  const togglePublish = (id: string) => {
-    setPlans(
-      plans.map((p) => (p.id === id ? { ...p, published: !p.published } : p))
-    );
+  const togglePublish = async (id: string, currentStatus: boolean) => {
+    setLoadingPlanId(id);
+    const result = currentStatus
+      ? await unpublishPlan(id)
+      : await publishPlan(id);
+
+    if (result.success) {
+      toast.success(result.message);
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to update plan");
+    }
+    setLoadingPlanId(null);
   };
 
-  const deletePlan = (id: string) => {
-    if (confirm("Are you sure you want to delete this plan?")) {
-      setPlans(plans.filter((p) => p.id !== id));
+  const handleDeletePlan = async (id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this plan? This will also delete all associated images and documents.",
+      )
+    ) {
+      return;
     }
+
+    setLoadingPlanId(id);
+    const result = await deletePlanAction(id);
+
+    if (result.success) {
+      toast.success("Plan deleted successfully");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to delete plan");
+    }
+    setLoadingPlanId(null);
   };
 
   const clearFilters = () => {
@@ -313,9 +353,15 @@ export default function AllPlansTable() {
             <thead className="border-b border-border bg-muted/50">
               <tr>
                 <th className="p-3 text-left text-sm font-medium">Plan</th>
-                <th className="hidden sm:table-cell p-3 text-left text-sm font-medium">Style</th>
-                <th className="hidden lg:table-cell p-3 text-left text-sm font-medium">Specs</th>
-                <th className="hidden md:table-cell p-3 text-left text-sm font-medium">Price</th>
+                <th className="hidden sm:table-cell p-3 text-left text-sm font-medium">
+                  Style
+                </th>
+                <th className="hidden lg:table-cell p-3 text-left text-sm font-medium">
+                  Specs
+                </th>
+                <th className="hidden md:table-cell p-3 text-left text-sm font-medium">
+                  Price
+                </th>
                 <th className="p-3 text-left text-sm font-medium">Status</th>
                 <th className="p-3 text-right text-sm font-medium">Actions</th>
               </tr>
@@ -323,7 +369,10 @@ export default function AllPlansTable() {
             <tbody>
               {paginatedPlans.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                  <td
+                    colSpan={6}
+                    className="p-8 text-center text-muted-foreground"
+                  >
                     No plans found. Try adjusting your filters.
                   </td>
                 </tr>
@@ -331,23 +380,29 @@ export default function AllPlansTable() {
                 paginatedPlans.map((plan) => (
                   <tr
                     key={plan.id}
-                    onClick={() => window.location.href = `/hp-admin/plans/${plan.id}/edit`}
+                    onClick={() => router.push(`/hp-admin/plans/${plan.id}`)}
                     className="border-b border-border last:border-0 hover:bg-muted/50 cursor-pointer"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative size-12 shrink-0 overflow-hidden rounded-lg">
-                          <Image
-                            src={plan.image}
-                            alt={plan.name}
-                            fill
-                            className="object-cover"
-                          />
+                        <div className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-muted">
+                          {plan.images?.[0] ? (
+                            <Image
+                              src={plan.images[0].cloudinaryUrl}
+                              alt={plan.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="size-full flex items-center justify-center text-xs text-muted-foreground">
+                              No img
+                            </div>
+                          )}
                         </div>
                         <div>
                           <div className="font-medium">{plan.name}</div>
                           <div className="text-xs text-muted-foreground">
-                            ID: {plan.id}
+                            #{plan.planNumber}
                           </div>
                         </div>
                       </div>
@@ -357,10 +412,10 @@ export default function AllPlansTable() {
                     </td>
                     <td className="hidden lg:table-cell p-3 text-sm">
                       {plan.bedrooms} bed · {plan.baths} bath · {plan.floors}{" "}
-                      floor · {plan.area}m²
+                      floor · {plan.sqft}m²
                     </td>
                     <td className="hidden md:table-cell p-3 text-sm font-medium">
-                      KSh {plan.price.toLocaleString()}
+                      KSh {Number(plan.basePrice).toLocaleString()}
                     </td>
                     <td className="p-3">
                       <div className="flex flex-col gap-1">
@@ -385,22 +440,19 @@ export default function AllPlansTable() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => togglePublish(plan.id)}
-                          title={
-                            plan.published ? "Unpublish" : "Publish"
-                          }
+                          onClick={() => togglePublish(plan.id, plan.published)}
+                          disabled={loadingPlanId === plan.id}
+                          title={plan.published ? "Unpublish" : "Publish"}
                         >
-                          {plan.published ? (
+                          {loadingPlanId === plan.id ? (
+                            <span className="size-4">...</span>
+                          ) : plan.published ? (
                             <EyeOff className="size-4" />
                           ) : (
                             <Eye className="size-4" />
                           )}
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          asChild
-                        >
+                        <Button variant="ghost" size="sm" asChild>
                           <Link href={`/hp-admin/plans/${plan.id}/edit`}>
                             <Edit className="size-4" />
                           </Link>
@@ -408,10 +460,15 @@ export default function AllPlansTable() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => deletePlan(plan.id)}
+                          onClick={() => handleDeletePlan(plan.id)}
+                          disabled={loadingPlanId === plan.id}
                           className="text-destructive hover:text-destructive"
                         >
-                          <Trash2 className="size-4" />
+                          {loadingPlanId === plan.id ? (
+                            <span className="size-4">...</span>
+                          ) : (
+                            <Trash2 className="size-4" />
+                          )}
                         </Button>
                       </div>
                     </td>
