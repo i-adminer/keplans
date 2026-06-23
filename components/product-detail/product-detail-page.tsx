@@ -126,6 +126,7 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
     if (!isInCart(plan.id)) {
       addToCart({
         id: plan.id,
+        slug: plan.slug,
         name: plan.name,
         image: plan.images[0]?.cloudinaryUrl || "/herobg/hbg-1.jpg",
         price: Number(plan.basePrice),
@@ -136,6 +137,7 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
   const handleWishlist = () => {
     addToWishlist({
       id: plan.id,
+      slug: plan.slug,
       name: plan.name,
       image: plan.images[0]?.cloudinaryUrl || "/herobg/hbg-1.jpg",
       price: Number(plan.basePrice),

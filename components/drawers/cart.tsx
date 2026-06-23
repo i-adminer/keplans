@@ -86,13 +86,17 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                 key={item.id}
                 className="flex gap-3 p-3 dark:bg-gray-50/10 bg-gray-50 shadow-2xl rounded-lg group"
               >
-                <Link href={`/product/${item.id}`} onClick={onClose}>
+                <Link
+                  href={`/product/${item.slug || item.id}`}
+                  onClick={onClose}
+                >
                   <div className=" h-16 w-20">
                     <Image
                       src={item.image}
                       alt={item.name}
                       width={60}
                       height={100}
+                      unoptimized
                       className=" object-cover shrink-0 h-full w-full"
                     />
                   </div>

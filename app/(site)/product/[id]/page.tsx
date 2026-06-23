@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import ProductDetailPage from "@/components/product-detail/product-detail-page";
 import { getPublicPlan } from "@/app/actions/plans";
-import { notFound } from "next/navigation";
 
 export const revalidate = 60;
 

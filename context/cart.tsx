@@ -20,48 +20,13 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Mock initial products for demonstration
-const mockCart: CartItem[] = [
-  {
-    id: "1",
-    name: "Modern Farmhouse Plan",
-    image: "/herobg/hbg-2.jpg",
-    price: 199.99,
-    quantity: 1,
-  },
-  {
-    id: "2",
-    name: "Contemporary Villa Design",
-    image: "/herobg/hbg-2.jpg",
-    price: 249.99,
-    quantity: 1,
-  },
-];
-
-const mockWishlist: ProductItem[] = [
-  {
-    id: "3",
-    name: "Traditional Bungalow Blueprint",
-    image: "/herobg/hbg-2.jpg",
-    price: 179.99,
-  },
-];
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>(mockCart);
-  const [wishlistItems, setWishlistItems] =
-    useState<ProductItem[]>(mockWishlist);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<ProductItem[]>([]);
 
   const addToCart = useCallback((product: ProductItem) => {
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
-      }
+      if (prev.some((item) => item.id === product.id)) return prev;
       return [...prev, { ...product, quantity: 1 }];
     });
   }, []);

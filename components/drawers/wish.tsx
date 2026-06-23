@@ -12,12 +12,8 @@ interface WishlistDrawerProps {
 }
 
 const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
-  const {
-    wishlistItems,
-    removeFromWishlist,
-    clearWishlist,
-    moveToCart,
-  } = useCart();
+  const { wishlistItems, removeFromWishlist, clearWishlist, moveToCart } =
+    useCart();
 
   const handleMoveToCart = (productId: string) => {
     moveToCart(productId);
@@ -89,13 +85,17 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
                 key={item.id}
                 className="flex gap-3 p-3 bg-gray-50 dark:bg-gray-50/10 shadow-2xl rounded-lg group"
               >
-                <Link href={`/product/${item.id}`} onClick={onClose}>
+                <Link
+                  href={`/product/${item.slug || item.id}`}
+                  onClick={onClose}
+                >
                   <div className=" h-16 w-20">
                     <Image
                       src={item.image}
                       alt={item.name}
                       width={60}
                       height={100}
+                      unoptimized
                       className=" object-cover shrink-0 h-full w-full"
                     />
                   </div>

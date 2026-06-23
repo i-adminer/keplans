@@ -2,7 +2,6 @@ import {
   Bath,
   Bed,
   Building,
-  Heart,
   Square,
   Star,
   TrendingUp,
@@ -39,11 +38,6 @@ const TopRatedCard = ({ plan }: RatedCardProps) => {
             alt="house plan"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-
-          {/* Heart Icon */}
-          <button className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur hover:bg-black/60 cursor-pointer transition-all hover:scale-110">
-            <Heart className="h-4 w-4" />
-          </button>
         </div>
 
         {/* INFO SECTION */}
@@ -55,8 +49,8 @@ const TopRatedCard = ({ plan }: RatedCardProps) => {
             {/* Enhanced Rating Section */}
             <div className="flex items-center gap-1.5 rounded-full  px-2 py-0.5">
               <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-xs font-semibold text-yellow-700">4.9</span>
-              <span className="text-xs text-muted-foreground">(2.3k)</span>
+              <span className="text-xs font-semibold text-yellow-700">(0)</span>
+              <span className="text-xs text-muted-foreground">(0)</span>
             </div>
           </div>
 
@@ -121,11 +115,6 @@ const TopRatedCard = ({ plan }: RatedCardProps) => {
               alt={plan.name}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-
-            {/* Heart Icon */}
-            <button className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur hover:bg-black/60 cursor-pointer transition-all hover:scale-110">
-              <Heart className="h-4 w-4" />
-            </button>
           </div>
 
           {/* INFO SECTION */}
@@ -138,11 +127,9 @@ const TopRatedCard = ({ plan }: RatedCardProps) => {
               <div className="flex items-center gap-1.5 rounded-full  px-2 py-0.5">
                 <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                 <span className="text-xs font-semibold text-yellow-700">
-                  {plan.rating ?? 0}
+                  {0}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  ({plan.reviewCount ?? 0})
-                </span>
+                <span className="text-xs text-muted-foreground">({0})</span>
               </div>
             </div>
 

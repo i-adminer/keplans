@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Bath, Bed, Building, Heart, Square, Star, Users } from "lucide-react";
+import { Bath, Bed, Building, Square, Star, Users } from "lucide-react";
 
 interface Plan {
   id: string;
@@ -41,17 +41,14 @@ const FamilyCard = ({ plan }: FamilyCardProps) => {
             alt="house plan"
             className="h-full w-full object-cover"
           />
-          <button className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur">
-            <Heart className="h-4 w-4" />
-          </button>
         </div>
         <div className="space-y-3 p-4">
           <div className="flex items-start justify-between">
             <h3 className="text-sm font-semibold">Modern Family House</h3>
             <div className="flex items-center gap-1.5 rounded-full px-2 py-0.5">
               <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-xs font-semibold text-yellow-700">4.9</span>
-              <span className="text-xs text-muted-foreground">(2.3k)</span>
+              <span className="text-xs font-semibold text-yellow-700">(0)</span>
+              <span className="text-xs text-muted-foreground">(0)</span>
             </div>
           </div>
           <div>
@@ -109,23 +106,16 @@ const FamilyCard = ({ plan }: FamilyCardProps) => {
               <span className="text-muted-foreground">No image</span>
             </div>
           )}
-          <button className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur transition-all hover:bg-black/60 hover:scale-110 cursor-pointer">
-            <Heart className="h-4 w-4" />
-          </button>
         </div>
 
         {/* INFO */}
         <div className="space-y-3 p-4">
           <div className="flex items-start justify-between">
             <h3 className="text-sm font-semibold">{plan.name}</h3>
-            <div className="flex items-center gap-1.5 rounded-full px-2 py-0.5">
+            <div className="flex items-center gap-1.5 rounded-full  px-2 py-0.5">
               <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-xs font-semibold text-yellow-700">
-                {rating}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                ({reviewCount})
-              </span>
+              <span className="text-xs font-semibold text-yellow-700">{0}</span>
+              <span className="text-xs text-muted-foreground">({0})</span>
             </div>
           </div>
           <div>
@@ -140,7 +130,9 @@ const FamilyCard = ({ plan }: FamilyCardProps) => {
             </div>
             <div className="flex flex-col items-center gap-1 rounded-md p-1.5">
               <Bath className="h-4 w-4" />
-              <span className="font-medium">{parseFloat(plan.baths)} Ba(s)</span>
+              <span className="font-medium">
+                {parseFloat(plan.baths)} Ba(s)
+              </span>
             </div>
             <div className="flex flex-col items-center gap-1 rounded-md p-1.5">
               <Square className="h-4 w-4" />

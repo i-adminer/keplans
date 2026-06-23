@@ -1,4 +1,4 @@
-import { Bath, Bed, Building, Heart, Square, Star } from "lucide-react";
+import { Bath, Bed, Building, Square, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -30,9 +30,6 @@ const RecentCard = ({ plan }: RecentCardProps) => {
             alt="house plan"
             className="h-full w-full object-cover"
           />
-          <button className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur">
-            <Heart className="h-4 w-4" />
-          </button>
         </div>
         <div className="space-y-3 p-3">
           <div className="flex items-start justify-between">
@@ -82,9 +79,6 @@ const RecentCard = ({ plan }: RecentCardProps) => {
               <span className="text-muted-foreground">No image</span>
             </div>
           )}
-          <button className="absolute right-3 top-3 rounded-full bg-black/40 p-2 text-white backdrop-blur hover:bg-black/60">
-            <Heart className="h-4 w-4" />
-          </button>
         </div>
         <div className="space-y-3 p-3">
           <div className="flex items-start justify-between">
