@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   Popover,
@@ -9,6 +10,8 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { buildPlansHref } from "@/lib/plans-filters";
+import type { BedroomFilterValue, FloorFilterValue } from "@/lib/plans-filters";
 
 type Field = "bedrooms" | "floors";
 
@@ -100,7 +103,7 @@ function SelectorButton({
             Enter a value from 0 to 10+
           </p>
 
-          {/* LIVE INPUT (no Add button) */}
+          {/* LIVE INPUT */}
           <Input
             type="number"
             min={0}
@@ -114,10 +117,25 @@ function SelectorButton({
     </Popover>
   );
 }
+
+// Helper to convert number to filter value
+function bedroomToFilterValue(n: number): BedroomFilterValue | "" {
+  if (n <= 0) return "";
+  if (n >= 5) return "5plus";
+  return String(n) as BedroomFilterValue;
+}
+
+function floorToFilterValue(n: number): FloorFilterValue | "" {
+  if (n <= 0) return "";
+  if (n >= 4) return "4plus";
+  return String(n) as FloorFilterValue;
+}
+
 export function DonutSelector() {
+  const router = useRouter();
   const [activeField, setActiveField] = useState<Field | null>(null);
   const [bedrooms, setBedrooms] = useState<number | null>(null);
-  const [floors, setfloors] = useState<number | null>(null);
+  const [floors, setFloors] = useState<number | null>(null);
 
   function openField(field: Field) {
     setActiveField(field);
@@ -125,6 +143,18 @@ export function DonutSelector() {
 
   function closeField() {
     setActiveField(null);
+  }
+
+  function handleGo() {
+    const bedroomFilter = bedrooms ? bedroomToFilterValue(bedrooms) : "";
+    const floorFilter = floors ? floorToFilterValue(floors) : "";
+
+    const href = buildPlansHref({
+      bedrooms: bedroomFilter || undefined,
+      floors: floorFilter || undefined,
+    });
+
+    router.push(href);
   }
 
   return (
@@ -144,15 +174,18 @@ export function DonutSelector() {
         open={activeField === "floors"}
         onOpen={() => openField("floors")}
         onClose={closeField}
-        onChange={setfloors}
+        onChange={setFloors}
       />
 
-      {/* Center button */}
-      <div className="absolute sm:inset-16 inset-12 z-30 flex cursor-pointer items-center select-none justify-center rounded-full bg-green-500 transition-colors hover:bg-green-400 active:bg-green-200">
+      {/* Center GO button */}
+      <button
+        onClick={handleGo}
+        className="absolute sm:inset-16 inset-12 z-30 flex cursor-pointer items-center select-none justify-center rounded-full bg-green-500 transition-colors hover:bg-green-400 active:bg-green-200"
+      >
         <span className="font-realce sm:text-5xl max-sm:text-4xl font-black text-white select-none">
           GO
         </span>
-      </div>
+      </button>
     </div>
   );
 }
