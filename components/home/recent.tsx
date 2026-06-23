@@ -5,7 +5,24 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import RecentCard from "../products/recent-card";
 
-const Recent = () => {
+interface Plan {
+  id: string;
+  name: string;
+  slug: string;
+  style: string;
+  basePrice: string;
+  bedrooms: number;
+  baths: string;
+  floors: number;
+  sqft: number;
+  images?: Array<{ cloudinaryUrl: string }>;
+}
+
+interface RecentProps {
+  plans: Plan[];
+}
+
+const Recent = ({ plans }: RecentProps) => {
   const listRef = useRef<HTMLDivElement>(null);
 
   function scrollList(direction: -1 | 1) {
@@ -14,6 +31,8 @@ const Recent = () => {
       behavior: "smooth",
     });
   }
+
+  const hasPlans = plans.length > 0;
 
   return (
     <div className="w-full pt-12 px-5">
@@ -45,11 +64,18 @@ const Recent = () => {
         ref={listRef}
         className="mt-5 flex gap-3 overflow-x-auto scrollbar-none pb-5"
       >
-        {[...Array(12)].map((_, i) => (
-          <div key={i} className="shrink-0">
-            <RecentCard />
-          </div>
-        ))}
+        {hasPlans
+          ? plans.map((plan) => (
+              <div key={plan.id} className="shrink-0">
+                <RecentCard plan={plan} />
+              </div>
+            ))
+          : // Show dummy cards when no real plans
+            Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="shrink-0">
+                <RecentCard />
+              </div>
+            ))}
       </div>
     </div>
   );

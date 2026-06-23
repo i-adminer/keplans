@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { DollarSign, SlidersHorizontal, ArrowRight } from "lucide-react";
+import { SlidersHorizontal, ArrowRight } from "lucide-react";
 
 import { buildPlansHref } from "@/lib/plans-filters";
 
@@ -80,7 +80,7 @@ const BudgetDropdown: React.FC<BudgetDropdownProps> = ({ onNavigate }) => {
                       : "hover:bg-white/10"
                   }`}
                 >
-                  <DollarSign className="size-4" />
+                  <span>KES</span>
                   {range.label}
                 </button>
               ))}
@@ -126,9 +126,9 @@ const BudgetDropdown: React.FC<BudgetDropdownProps> = ({ onNavigate }) => {
               </div>
 
               <div className="flex justify-between text-xs text-gray-300 mt-2">
-                  <span>KES 0</span>
-                  <span>KES 500K</span>
-                  <span>KES 1M</span>
+                <span>KES 0</span>
+                <span>KES 500K</span>
+                <span>KES 1M</span>
               </div>
             </div>
           </div>

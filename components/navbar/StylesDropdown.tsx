@@ -24,23 +24,70 @@ interface HouseStyle {
   name: string;
   icon: LucideIcon;
   image: string;
+  value: string;
 }
 
 const houseStyles: HouseStyle[] = [
-  { name: "Modern", icon: Building2, image: "/api/placeholder/600/400" },
-  { name: "Contemporary", icon: Building, image: "/api/placeholder/600/400" },
-  { name: "Traditional", icon: Home, image: "/api/placeholder/600/400" },
+  {
+    name: "Modern",
+    icon: Building2,
+    image: "/api/placeholder/600/400",
+    value: "modern",
+  },
+  {
+    name: "Contemporary",
+    icon: Building,
+    image: "/api/placeholder/600/400",
+    value: "contemporary",
+  },
+  {
+    name: "Traditional",
+    icon: Home,
+    image: "/api/placeholder/600/400",
+    value: "traditional",
+  },
   {
     name: "Modern Farmhouse",
     icon: Warehouse,
     image: "/api/placeholder/600/400",
+    value: "modern-farmhouse",
   },
-  { name: "Farmhouse", icon: House, image: "/api/placeholder/600/400" },
-  { name: "Bungalow", icon: Palmtree, image: "/api/placeholder/600/400" },
-  { name: "Cabin", icon: Mountain, image: "/api/placeholder/600/400" },
-  { name: "Country", icon: Tent, image: "/api/placeholder/600/400" },
-  { name: "Mediterranean", icon: Ship, image: "/api/placeholder/600/400" },
-  { name: "Victorian", icon: Castle, image: "/api/placeholder/600/400" },
+  {
+    name: "Farmhouse",
+    icon: House,
+    image: "/api/placeholder/600/400",
+    value: "farmhouse",
+  },
+  {
+    name: "Bungalow",
+    icon: Palmtree,
+    image: "/api/placeholder/600/400",
+    value: "bungalow",
+  },
+  {
+    name: "Cabin",
+    icon: Mountain,
+    image: "/api/placeholder/600/400",
+    value: "cabin",
+  },
+  {
+    name: "Country",
+    icon: Tent,
+    image: "/api/placeholder/600/400",
+    value: "country",
+  },
+  {
+    name: "Mediterranean",
+    icon: Ship,
+    image: "/api/placeholder/600/400",
+    value: "mediterranean",
+  },
+  {
+    name: "Victorian",
+    icon: Castle,
+    image: "/api/placeholder/600/400",
+    value: "victorian",
+  },
 ];
 
 interface StylesDropdownProps {

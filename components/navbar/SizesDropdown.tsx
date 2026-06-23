@@ -43,7 +43,9 @@ const SizesDropdown: React.FC<SizesDropdownProps> = ({ onNavigate }) => {
   const searchParams = useSearchParams();
   const plansHref = buildPlansHref(
     {
-      ...(selectedBedroom ? { bedrooms: bedroomValueFromLabel(selectedBedroom) } : {}),
+      ...(selectedBedroom
+        ? { bedrooms: bedroomValueFromLabel(selectedBedroom) }
+        : {}),
       ...(selectedFloor ? { floors: floorValueFromLabel(selectedFloor) } : {}),
       ...(selectedArea ? { area: areaValueFromLabel(selectedArea) } : {}),
     },
@@ -185,13 +187,17 @@ const SizesMobileContent: React.FC<SizesMobileContentProps> = ({
   onNavigate,
 }) => {
   const [section, setSection] = React.useState<string | null>(null);
-  const [selectedBedroom, setSelectedBedroom] = React.useState<string | null>(null);
+  const [selectedBedroom, setSelectedBedroom] = React.useState<string | null>(
+    null,
+  );
   const [selectedFloor, setSelectedFloor] = React.useState<string | null>(null);
   const [selectedArea, setSelectedArea] = React.useState<string | null>(null);
   const searchParams = useSearchParams();
   const plansHref = buildPlansHref(
     {
-      ...(selectedBedroom ? { bedrooms: bedroomValueFromLabel(selectedBedroom) } : {}),
+      ...(selectedBedroom
+        ? { bedrooms: bedroomValueFromLabel(selectedBedroom) }
+        : {}),
       ...(selectedFloor ? { floors: floorValueFromLabel(selectedFloor) } : {}),
       ...(selectedArea ? { area: areaValueFromLabel(selectedArea) } : {}),
     },
@@ -213,7 +219,9 @@ const SizesMobileContent: React.FC<SizesMobileContentProps> = ({
               key={bed}
               onClick={() => setSelectedBedroom(bed)}
               className={`block w-full text-left p-1 text-sm rounded ${
-                selectedBedroom === bed ? "bg-white/20 font-semibold" : "hover:bg-white/10"
+                selectedBedroom === bed
+                  ? "bg-white/20 font-semibold"
+                  : "hover:bg-white/10"
               }`}
             >
               {bed}
@@ -235,7 +243,9 @@ const SizesMobileContent: React.FC<SizesMobileContentProps> = ({
               key={floor}
               onClick={() => setSelectedFloor(floor)}
               className={`block w-full text-left p-1 text-sm rounded ${
-                selectedFloor === floor ? "bg-white/20 font-semibold" : "hover:bg-white/10"
+                selectedFloor === floor
+                  ? "bg-white/20 font-semibold"
+                  : "hover:bg-white/10"
               }`}
             >
               {floor}
@@ -257,7 +267,9 @@ const SizesMobileContent: React.FC<SizesMobileContentProps> = ({
               key={area}
               onClick={() => setSelectedArea(area)}
               className={`block w-full text-left p-1 text-sm rounded ${
-                selectedArea === area ? "bg-white/20 font-semibold" : "hover:bg-white/10"
+                selectedArea === area
+                  ? "bg-white/20 font-semibold"
+                  : "hover:bg-white/10"
               }`}
             >
               {area}

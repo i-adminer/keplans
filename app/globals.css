@@ -130,6 +130,7 @@
 
 @theme {
   --font-realce: "Realce", sans-serif;
+  --font-family-realce: "Realce", sans-serif;
   --font-playfair: var(--font-playfair);
   --font-pacifico: var(--font-pacifico);
   --color-cream: #fbf7ef;

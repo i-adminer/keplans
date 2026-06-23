@@ -692,7 +692,6 @@ export default function PlanCreationForm({
                   <label className="text-sm font-medium">Baths *</label>
                   <Input
                     type="number"
-                    step="0.5"
                     placeholder="2"
                     value={formData.baths}
                     onChange={(e) =>

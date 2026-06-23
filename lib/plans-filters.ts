@@ -1,7 +1,11 @@
 export type BedroomFilterValue = "1" | "2" | "3" | "4" | "5plus";
 export type FloorFilterValue = "1" | "2" | "3" | "4plus";
 export type AreaFilterValue = "under-100" | "100-200" | "200-300" | "300-plus";
-export type SortValue = "recommended" | "price-asc" | "price-desc" | "rating-desc";
+export type SortValue =
+  | "recommended"
+  | "price-asc"
+  | "price-desc"
+  | "rating-desc";
 
 export interface PlansQueryState {
   style: string;
@@ -180,7 +184,11 @@ export function buildPlansHref(
   const params = new URLSearchParams(baseQuery);
 
   if (patch.style !== undefined) {
-    updateParam(params, "style", patch.style ? slugifyFilterValue(patch.style) : "");
+    updateParam(
+      params,
+      "style",
+      patch.style ? slugifyFilterValue(patch.style) : "",
+    );
   }
 
   if (patch.bedrooms !== undefined) {
@@ -222,7 +230,7 @@ export function buildPlansHref(
 }
 
 export function formatMoney(value: number): string {
-  return `KES ${value.toLocaleString("en-US")}`;
+  return `${value.toLocaleString("en-US")}`;
 }
 
 export function formatArea(value: number): string {

@@ -19,9 +19,7 @@ const publicRoutes = [
 ];
 
 // Admin-only routes
-const adminRoutes = [
-  "/hp-admin",
-];
+const adminRoutes = ["/hp-admin"];
 
 // Auth routes (redirect if already authenticated)
 const authRoutes = [
@@ -53,8 +51,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // Check if route is public
-  const isPublicRoute = publicRoutes.some((route) => 
-    pathname === route || pathname.startsWith(route + "/")
+  const isPublicRoute = publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
   // Allow public routes and auth routes (already handled above)
@@ -63,8 +61,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // Check if route requires admin
-  const isAdminRoute = adminRoutes.some((route) => 
-    pathname === route || pathname.startsWith(route + "/")
+  const isAdminRoute = adminRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
   // Protect admin routes

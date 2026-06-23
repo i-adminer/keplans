@@ -512,3 +512,72 @@ export async function getAllPlans() {
     return { error: "Failed to get plans" };
   }
 }
+
+// ========== PUBLIC QUERIES FOR CUSTOMER SITE ==========
+
+export async function getPublishedPlans() {
+  try {
+    const plans = await db.query.housePlans.findMany({
+      where: eq(housePlans.published, true),
+      orderBy: [desc(housePlans.createdAt)],
+      with: {
+        images: {
+          orderBy: [asc(planImages.sortOrder)],
+        },
+      },
+    });
+
+    return { success: true, plans };
+  } catch (error) {
+    console.error("Get published plans error:", error);
+    return { error: "Failed to get plans" };
+  }
+}
+
+export async function getFeaturedPlans() {
+  try {
+    const plans = await db.query.housePlans.findMany({
+      where: eq(housePlans.featured, true),
+      orderBy: [desc(housePlans.createdAt)],
+      with: {
+        images: {
+          limit: 1,
+          orderBy: [asc(planImages.sortOrder)],
+        },
+      },
+    });
+
+    return { success: true, plans };
+  } catch (error) {
+    console.error("Get featured plans error:", error);
+    return { error: "Failed to get featured plans" };
+  }
+}
+
+export async function getPublicPlan(slug: string) {
+  try {
+    const plan = await db.query.housePlans.findFirst({
+      where: eq(housePlans.slug, slug),
+      with: {
+        images: {
+          orderBy: [asc(planImages.sortOrder)],
+        },
+        options: {
+          orderBy: [asc(planOptions.sortOrder)],
+        },
+        faqs: {
+          orderBy: [asc(planFaqs.sortOrder)],
+        },
+      },
+    });
+
+    if (!plan || !plan.published) {
+      return { error: "Plan not found" };
+    }
+
+    return { success: true, plan };
+  } catch (error) {
+    console.error("Get public plan error:", error);
+    return { error: "Failed to get plan" };
+  }
+}
