@@ -22,6 +22,12 @@ interface NavItem {
 }
 
 const Navbar: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [activeDropdown, setActiveDropdown] = useState<DropdownType>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
@@ -115,7 +121,7 @@ const Navbar: React.FC = () => {
                 aria-label="Open wishlist"
               >
                 <Heart className="text-white cursor-pointer size-5 hover:text-gray-200 transition-colors" />
-                {wishlistItems.length > 0 && (
+                {mounted && wishlistItems.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                     {wishlistItems.length}
                   </span>
@@ -127,7 +133,7 @@ const Navbar: React.FC = () => {
                 aria-label="Open cart"
               >
                 <ShoppingCart className="text-white cursor-pointer size-5 hover:text-gray-200 transition-colors" />
-                {cartItems.length > 0 && (
+                {mounted && cartItems.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                     {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
                   </span>
@@ -169,7 +175,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Dropdowns */}
-              {activeDropdown === "styles" && (
+          {activeDropdown === "styles" && (
             <div
               onMouseEnter={() => handleMouseEnter("styles")}
               onMouseLeave={handleMouseLeave}

@@ -75,22 +75,6 @@ export default function PlanCard({
               <span className="rounded-full bg-black/55 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                 {styleLabel}
               </span>
-
-              <button
-                type="button"
-                onClick={() => onToggleFavorite(plan.id)}
-                className={`inline-flex size-10 items-center justify-center rounded-full border border-white/15 backdrop-blur-sm transition-all ${
-                  isFavorite
-                    ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20"
-                    : "bg-black/55 text-white hover:bg-black/75"
-                }`}
-                aria-pressed={isFavorite}
-                aria-label={`${isFavorite ? "Remove" : "Save"} ${plan.name}`}
-              >
-                <Heart
-                  className={`size-4 ${isFavorite ? "fill-current" : ""}`}
-                />
-              </button>
             </div>
 
             <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur-sm">

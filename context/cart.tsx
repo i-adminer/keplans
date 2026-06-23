@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import { ProductItem, CartItem } from "@/types/cart";
 
 interface CartContextType {
@@ -16,13 +22,51 @@ interface CartContextType {
   moveToCart: (productId: string) => void;
   isInCart: (productId: string) => boolean;
   isInWishlist: (productId: string) => boolean;
+  mounted: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "keplans_cart";
+const WISHLIST_STORAGE_KEY = "keplans_wishlist";
+
+// Load from localStorage
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [wishlistItems, setWishlistItems] = useState<ProductItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() =>
+    loadFromStorage(CART_STORAGE_KEY, []),
+  );
+  const [wishlistItems, setWishlistItems] = useState<ProductItem[]>(() =>
+    loadFromStorage(WISHLIST_STORAGE_KEY, []),
+  );
+  const [mounted, setMounted] = useState(false);
+
+  // Mark as mounted (client-side only)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Persist to localStorage on changes
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    }
+  }, [cartItems, mounted]);
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlistItems));
+    }
+  }, [wishlistItems, mounted]);
 
   const addToCart = useCallback((product: ProductItem) => {
     setCartItems((prev) => {
@@ -108,6 +152,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         moveToCart,
         isInCart,
         isInWishlist,
+        mounted,
       }}
     >
       {children}

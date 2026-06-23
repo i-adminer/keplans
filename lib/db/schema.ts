@@ -469,3 +469,10 @@ export const orderItemsRelations = relations(orderItems, ({ one, many }) => ({
   }),
   documents: many(orderDocuments),
 }));
+
+export const paymentTransactionsRelations = relations(paymentTransactions, ({ one }) => ({
+  order: one(orders, {
+    fields: [paymentTransactions.orderId],
+    references: [orders.id],
+  }),
+}));

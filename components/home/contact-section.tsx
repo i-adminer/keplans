@@ -1,7 +1,10 @@
-import { ChevronDown, MapPin, Phone } from "lucide-react";
+"use client";
 
+import { useState } from "react";
+import { ChevronDown, MapPin, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import { sendContactMessage } from "@/app/actions/messages";
+import { toast } from "sonner";
 
 type FaqItem = {
   question: string;
@@ -53,6 +56,27 @@ function FaqRow({ question, answer }: FaqItem) {
 }
 
 export default function ContactSection() {
+  const [sending, setSending] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSending(true);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const result = await sendContactMessage(formData);
+
+    if (result.success) {
+      toast.success("Message sent! We'll get back to you within 24 hours.");
+      form.reset();
+    } else {
+      toast.error(result.error || "Failed to send message. Please try again.");
+    }
+
+    setSending(false);
+  }
+
   return (
     <>
       <section className="relative overflow-hidden bg-cream dark:bg-cream/10 ">
@@ -88,34 +112,43 @@ export default function ContactSection() {
             </div>
           </div>
 
-          <form className="mx-auto mt-12 max-w-4xl p-6 hover:shadow-2xl sm:p-8 lg:p-10">
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto mt-12 max-w-4xl p-6 hover:shadow-2xl sm:p-8 lg:p-10"
+          >
             <div className="grid gap-5 md:grid-cols-2">
               <label className="space-y-2">
                 <span className="text-sm font-medium">First Name</span>
-                <Input placeholder="First Name" />
+                <Input name="firstName" placeholder="First Name" required />
               </label>
 
               <label className="space-y-2">
                 <span className="text-sm font-medium">Last Name</span>
-                <Input placeholder="Last Name" />
+                <Input name="lastName" placeholder="Last Name" required />
               </label>
 
               <label className="space-y-2">
                 <span className="text-sm font-medium">Email</span>
-                <Input type="email" placeholder="Email" />
+                <Input name="email" type="email" placeholder="Email" required />
               </label>
 
               <label className="space-y-2">
                 <span className="text-sm font-medium">Phone Number</span>
-                <Input type="tel" placeholder="+254 700 000 000" />
+                <Input name="phone" type="tel" placeholder="+254 700 000 000" />
               </label>
 
               <label className="space-y-2">
                 <span className="text-sm font-medium">
                   When do you want to start?
                 </span>
-                <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring">
-                  <option>Choose a timeline</option>
+                <select
+                  name="timeline"
+                  defaultValue=""
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring"
+                >
+                  <option value="" disabled>
+                    Choose a timeline
+                  </option>
                   <option>Immediately</option>
                   <option>Within 3 months</option>
                   <option>Within 6 months</option>
@@ -128,7 +161,9 @@ export default function ContactSection() {
                   How can we help you?
                 </span>
                 <textarea
+                  name="message"
                   rows={6}
+                  required
                   placeholder="Tell us about your project, the number of bedrooms, the number of stories, and any county or site details."
                   className="min-h-36 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring"
                 />
@@ -138,20 +173,27 @@ export default function ContactSection() {
             <label className="mt-5 flex items-start gap-2 text-sm text-muted-foreground">
               <input
                 type="checkbox"
+                name="updates"
                 className="mt-1 size-4 rounded border-input cursor-pointer"
               />
               <span>Send me project updates and new plan releases too.</span>
             </label>
 
             <div className="mt-8 flex justify-center">
-              <Link href={"/contact-us"}>
-                <button
-                  type="submit"
-                  className="inline-flex cursor-pointer h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  Get Expert Advice
-                </button>
-              </Link>
+              <button
+                type="submit"
+                disabled={sending}
+                className="inline-flex cursor-pointer h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
+              >
+                {sending ? (
+                  <>
+                    <Loader2 className="size-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Get Expert Advice"
+                )}
+              </button>
             </div>
           </form>
         </div>

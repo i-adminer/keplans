@@ -15,6 +15,7 @@ const publicRoutes = [
   "/forgot-password",
   "/reset-password",
   "/verify-otp",
+  "/payment/verify",
   "/api/admin/seed",
 ];
 

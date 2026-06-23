@@ -21,31 +21,22 @@ interface Order {
   email: string;
   plan: string;
   amount: number;
-  status: "pending" | "completed" | "canceled" | "processing";
-  paymentStatus: "pending" | "completed" | "failed";
-  createdAt: string;
+  status: string;
+  paymentStatus: string;
+  createdAt: Date;
 }
 
-// Dummy data
-const dummyOrders: Order[] = [
-  { id: "1", orderNumber: "ORD-2045", customer: "John Kamau", email: "john@example.com", plan: "Kenya Court Modern", amount: 128000, status: "completed", paymentStatus: "completed", createdAt: "2024-06-15" },
-  { id: "2", orderNumber: "ORD-2044", customer: "Mary Wanjiku", email: "mary@example.com", plan: "Ridge View Contemporary", amount: 184000, status: "pending", paymentStatus: "pending", createdAt: "2024-06-15" },
-  { id: "3", orderNumber: "ORD-2043", customer: "Peter Ochieng", email: "peter@example.com", plan: "Nairobi Breeze Farmhouse", amount: 216000, status: "completed", paymentStatus: "completed", createdAt: "2024-06-14" },
-  { id: "4", orderNumber: "ORD-2042", customer: "Grace Akinyi", email: "grace@example.com", plan: "Savanna Modern Villa", amount: 310000, status: "processing", paymentStatus: "completed", createdAt: "2024-06-14" },
-  { id: "5", orderNumber: "ORD-2041", customer: "David Mwangi", email: "david@example.com", plan: "Lake View Traditional", amount: 175000, status: "canceled", paymentStatus: "failed", createdAt: "2024-06-13" },
-  { id: "6", orderNumber: "ORD-2040", customer: "Sarah Njeri", email: "sarah@example.com", plan: "Coastal Breeze Villa", amount: 295000, status: "completed", paymentStatus: "completed", createdAt: "2024-06-13" },
-  { id: "7", orderNumber: "ORD-2039", customer: "James Kipchoge", email: "james@example.com", plan: "Highland Modern", amount: 156000, status: "processing", paymentStatus: "completed", createdAt: "2024-06-12" },
-  { id: "8", orderNumber: "ORD-2038", customer: "Lucy Wangari", email: "lucy@example.com", plan: "Urban Contemporary", amount: 198000, status: "completed", paymentStatus: "completed", createdAt: "2024-06-12" },
-  { id: "9", orderNumber: "ORD-2037", customer: "Tom Omondi", email: "tom@example.com", plan: "Garden Villa", amount: 245000, status: "pending", paymentStatus: "pending", createdAt: "2024-06-11" },
-  { id: "10", orderNumber: "ORD-2036", customer: "Jane Mutua", email: "jane@example.com", plan: "Sunset Farmhouse", amount: 189000, status: "completed", paymentStatus: "completed", createdAt: "2024-06-11" },
-];
+interface AllOrdersTableProps {
+  orders: Order[];
+  customerEmail?: string;
+}
 
-export default function AllOrdersTable() {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function AllOrdersTable({ orders: initialOrders, customerEmail }: AllOrdersTableProps) {
+  const [searchQuery, setSearchQuery] = useState(customerEmail || "");
   const [statusFilter, setStatusFilter] = useState("");
   const [paymentFilter, setPaymentFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [orders] = useState<Order[]>(dummyOrders);
+  const orders = initialOrders;
 
   // Filter logic
   const filteredOrders = useMemo(() => {
@@ -83,15 +74,18 @@ export default function AllOrdersTable() {
 
   const hasActiveFilters = searchQuery || statusFilter || paymentFilter;
 
-  const getStatusColor = (status: Order["status"]) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
+      case "payment_confirmed":
         return "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300";
       case "processing":
         return "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300";
       case "pending":
+      case "payment_pending":
         return "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300";
       case "canceled":
+      case "refunded":
         return "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300";
       default:
         return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
@@ -233,7 +227,11 @@ export default function AllOrdersTable() {
                       <div>
                         <div className="font-medium">{order.orderNumber}</div>
                         <div className="text-xs text-muted-foreground">
-                          {order.createdAt}
+                          {new Date(order.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
                         </div>
                       </div>
                     </td>

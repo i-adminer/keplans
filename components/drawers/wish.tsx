@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X, Trash2, Heart, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +14,11 @@ interface WishlistDrawerProps {
 const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
   const { wishlistItems, removeFromWishlist, clearWishlist, moveToCart } =
     useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleMoveToCart = (productId: string) => {
     moveToCart(productId);
@@ -21,7 +26,6 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity"
@@ -29,25 +33,24 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
         />
       )}
 
-      {/* Drawer */}
       <div
         className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-background shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b ">
+        <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-2">
             <Heart className="size-5 text-red-500 fill-red-500" />
-            <h2 className="text-lg font-semibold ">
-              Wishlist ({wishlistItems.length})
+            <h2 className="text-lg font-semibold">
+              Wishlist ({mounted ? wishlistItems.length : 0})
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            {wishlistItems.length > 0 && (
+            {mounted && wishlistItems.length > 0 && (
               <button
                 onClick={clearWishlist}
-                className="text-sm text-red-500  flex items-center gap-1 "
+                className="text-sm text-red-500 flex items-center gap-1"
               >
                 <Trash2 className="size-4" />
                 <span className="hidden sm:inline">Clear all</span>
@@ -57,7 +60,7 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
               onClick={onClose}
               className="p-1 cursor-pointer rounded-full transition-colors"
             >
-              <X className="size-5 " />
+              <X className="size-5" />
             </button>
           </div>
         </div>
@@ -67,12 +70,12 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
           className="flex-1 overflow-y-auto p-4 space-y-4"
           style={{ maxHeight: "calc(100vh - 80px)" }}
         >
-          {wishlistItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64  ">
+          {!mounted || wishlistItems.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-64">
               <Heart className="size-16 mb-4" />
               <p>Your wishlist is empty</p>
               <Link
-                href="/explore"
+                href="/plans"
                 onClick={onClose}
                 className="text-muted-foreground hover:underline mt-2"
               >
@@ -89,27 +92,27 @@ const WishlistDrawer: React.FC<WishlistDrawerProps> = ({ isOpen, onClose }) => {
                   href={`/product/${item.slug || item.id}`}
                   onClick={onClose}
                 >
-                  <div className=" h-16 w-20">
+                  <div className="h-16 w-20">
                     <Image
                       src={item.image}
                       alt={item.name}
                       width={60}
                       height={100}
+                      className="object-cover shrink-0 h-full w-full"
                       unoptimized
-                      className=" object-cover shrink-0 h-full w-full"
                     />
                   </div>
                 </Link>
                 <div className="flex-1 min-w-0">
                   <Link
-                    href={`/product/${item.id}`}
+                    href={`/product/${item.slug || item.id}`}
                     onClick={onClose}
-                    className="font-medium   transition-colors line-clamp-2"
+                    className="font-medium transition-colors line-clamp-2"
                   >
                     {item.name}
                   </Link>
-                  <p className=" font-semibold mt-1">
-                    KES {item.price.toFixed(2)}
+                  <p className="font-semibold mt-1">
+                    KES {item.price.toLocaleString()}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -91,6 +91,7 @@ const tabs = [
 ];
 
 export default function ProductDetailPage({ plan }: ProductDetailProps) {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -100,6 +101,9 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
   const [selectedAddon, setSelectedAddon] = useState("");
   const { addToCart, addToWishlist, isInWishlist, isInCart } = useCart();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const foundationOptions = plan.options.filter(
     (o) => o.optionType === "foundation",
   );
@@ -197,14 +201,14 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
             <Button
               variant="outline"
               size="lg"
-              className={`gap-2 ${inWishlist ? "border-red-500 bg-red-50 dark:bg-red-950" : ""}`}
+              className={`gap-2 ${mounted && inWishlist ? "border-red-500 bg-red-50 dark:bg-red-950" : ""}`}
               onClick={handleWishlist}
             >
               <Heart
-                className={`size-4 ${inWishlist ? "fill-red-500 text-red-500" : ""}`}
+                className={`size-4 ${mounted && inWishlist ? "fill-red-500 text-red-500" : ""}`}
               />
               <span className="hidden sm:inline">
-                {inWishlist ? "Saved" : "Save"}
+                {mounted && inWishlist ? "Saved" : "Save"}
               </span>
             </Button>
           </div>
@@ -540,15 +544,17 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
                   size="lg"
                   className="w-full gap-2"
                   onClick={handleAddToCart}
-                  disabled={inCart}
+                  disabled={mounted && inCart}
                 >
-                  {inCart ? (
+                  {mounted && inCart ? (
                     <>
-                      <Check className="size-5" /> Already in Cart
+                      <Check className="size-5" />
+                      Already in Cart
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="size-5" /> Add to Cart
+                      <ShoppingCart className="size-5" />
+                      Add to Cart
                     </>
                   )}
                 </Button>

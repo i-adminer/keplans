@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import RichTextEditor from "@/components/admin/rich-text-editor";
-import { Search, Mail, Phone, Package, X, Send, ChevronLeft, ChevronRight } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Search, Mail, Phone, Package, X, Send, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { sendMessageToCustomer } from "@/app/actions/messages";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -28,12 +31,14 @@ interface CustomersTableProps {
 }
 
 export default function CustomersTable({ customers }: CustomersTableProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
   const [messageSubject, setMessageSubject] = useState("");
   const [messageContent, setMessageContent] = useState("");
+  const [sending, setSending] = useState(false);
 
   const filteredCustomers = customers.filter((customer) => {
     const fullName = `${customer.firstName} ${customer.lastName}`.toLowerCase();
@@ -61,15 +66,29 @@ export default function CustomersTable({ customers }: CustomersTableProps) {
     });
   };
 
-  const handleSendMessage = () => {
-    if (!messageSubject.trim() || !messageContent.trim()) {
+  const handleSendMessage = async () => {
+    if (!selectedCustomer || !messageSubject.trim() || !messageContent.trim()) {
       toast.error("Please fill in subject and message");
       return;
     }
-    toast.success("Message sent via email!");
-    setShowMessageDialog(false);
-    setMessageSubject("");
-    setMessageContent("");
+
+    setSending(true);
+    const result = await sendMessageToCustomer(
+      selectedCustomer.id,
+      messageSubject,
+      messageContent
+    );
+
+    if (result.success) {
+      toast.success("Message sent successfully!");
+      setShowMessageDialog(false);
+      setMessageSubject("");
+      setMessageContent("");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to send message");
+    }
+    setSending(false);
   };
 
   return (
@@ -279,9 +298,15 @@ export default function CustomersTable({ customers }: CustomersTableProps) {
                   <Mail className="size-4 mr-2" />
                   Send Email
                 </Button>
-                <Button variant="outline" className="w-full">
-                  <Package className="size-4 mr-2" />
-                  View Orders
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  asChild
+                >
+                  <Link href={`/hp-admin/orders?customer=${selectedCustomer.email}`}>
+                    <Package className="size-4 mr-2" />
+                    View Orders
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -322,10 +347,12 @@ export default function CustomersTable({ customers }: CustomersTableProps) {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Message</label>
-                <RichTextEditor
-                  content={messageContent}
-                  onChange={setMessageContent}
+                <Textarea
+                  value={messageContent}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessageContent(e.target.value)}
                   placeholder="Type your message..."
+                  rows={6}
+                  className="resize-none"
                 />
               </div>
 
@@ -337,12 +364,22 @@ export default function CustomersTable({ customers }: CustomersTableProps) {
                     setMessageSubject("");
                     setMessageContent("");
                   }}
+                  disabled={sending}
                 >
                   Cancel
                 </Button>
-                <Button onClick={handleSendMessage}>
-                  <Send className="size-4 mr-2" />
-                  Send
+                <Button onClick={handleSendMessage} disabled={sending}>
+                  {sending ? (
+                    <>
+                      <Loader2 className="size-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="size-4 mr-2" />
+                      Send
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
