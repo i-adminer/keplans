@@ -1,5 +1,10 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
 import Logo from "../logo";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 function PinterestIcon() {
   return (
@@ -79,6 +84,23 @@ function YoutubeIcon() {
 }
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
+
+    setSubscribing(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    setSubscribing(false);
+    toast.success("Subscribed! Thanks for joining.");
+    setEmail("");
+  };
+
   return (
     <footer className="w-full  text-foreground bg-cream dark:bg-cream/10">
       <div className="mx-auto max-w-360 px-6 pb-0 pt-10 sm:px-10 lg:px-12">
@@ -91,39 +113,67 @@ const Footer = () => {
             <section>
               <h2 className="text-2xl font-medium">Shop</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-                <li>Most Popular</li>
-                <li>By Style</li>
-                <li>By Region</li>
-                <li>By Size</li>
-                <li>Shop All Plans</li>
+                <li>
+                  <Link
+                    href="/plans"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Most Popular
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/plans"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    By Style
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/plans"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    By Region
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/plans"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    By Size
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/plans"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Shop All Plans
+                  </Link>
+                </li>
               </ul>
             </section>
 
             <section>
               <h2 className="text-2xl font-medium">Company</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-                <li>About Us</li>
-                <li>How It Works</li>
-                <li>Exclusive Designers</li>
-                <li className="flex items-center gap-1">
-                  <span>New Home Source</span>
-                  <ArrowUpRight className="size-4" />
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    About Us
+                  </Link>
                 </li>
-                <li className="flex items-center gap-1">
-                  <span>Builder Magazine</span>
-                  <ArrowUpRight className="size-4" />
-                </li>
-                <li className="flex items-center gap-1">
-                  <span>Journal of Light Construction</span>
-                  <ArrowUpRight className="size-4" />
-                </li>
-                <li className="flex items-center gap-1">
-                  <img
-                    src="https://www.seamlessit.co.ke/logo.png"
-                    alt="Seamless IT"
-                    className="h-7 w-auto"
-                  />
-                  <ArrowUpRight className="size-4" />
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Contact Us
+                  </Link>
                 </li>
               </ul>
             </section>
@@ -131,43 +181,84 @@ const Footer = () => {
             <section>
               <h2 className="text-2xl font-medium">Resources</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-                <li>Builder Advantage Program</li>
-                <li>Plan Modification Guide</li>
-                <li>Residential Construction Guide</li>
-                <li>Publish Plans</li>
-                <li>Affiliate Program</li>
-                <li>Blog</li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Plan Modification Guide
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Residential Construction Guide
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Affiliate Program
+                  </Link>
+                </li>
               </ul>
             </section>
 
             <section>
               <h2 className="text-2xl font-medium">Support</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-                <li>Contact Us</li>
-                <li>FAQs</li>
-                <li>1-800-913-2350</li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms-conditions"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    FAQs
+                  </Link>
+                </li>
+                <li className="hover:text-foreground transition-colors cursor-pointer">
+                  254-712-456-987
+                </li>
               </ul>
             </section>
 
             <section className="xl:pl-4">
-              <h2 className="text-2xl font-medium">Get Our Newsletter</h2>
+              <h2 className="text-2xl font-medium">Stay Updated</h2>
               <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">
-                Be the first to see new plans, special offers, and more.
+                Get the latest house plans and special offers.
               </p>
 
-              <div className="mt-5 flex max-w-md flex-col gap-3">
+              <form
+                onSubmit={handleSubscribe}
+                className="mt-5 flex max-w-md flex-col gap-3"
+              >
                 <input
                   type="email"
                   placeholder="Email Address"
-                  className="h-10 rounded-[4px] border border-input bg-background px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-ring"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={subscribing}
+                  className="h-10 rounded-[4px] border border-input bg-background px-3 text-sm outline-none placeholder:text-muted-foreground focus:border-ring disabled:opacity-50"
                 />
                 <button
-                  type="button"
-                  className="h-10 rounded-[6px] bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  type="submit"
+                  disabled={subscribing}
+                  className="h-10 rounded-[6px] bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
                 >
-                  Sign Up
+                  {subscribing ? "Subscribing..." : "Sign Up"}
                 </button>
-              </div>
+              </form>
 
               <label className="mt-4 flex max-w-md items-start gap-2 text-xs leading-5 text-muted-foreground">
                 <input
@@ -175,8 +266,20 @@ const Footer = () => {
                   className="mt-1 size-4 rounded border-input"
                 />
                 <span>
-                  By signing up for our newsletter, you agree to our Terms &amp;
-                  Conditions and Privacy Policy, for an account
+                  By signing up for our newsletter, you agree to our{" "}
+                  <Link
+                    href="/terms-conditions"
+                    className="underline hover:text-foreground"
+                  >
+                    Terms &amp; Conditions
+                  </Link>{" "}
+                  and{" "}
+                  <Link
+                    href="/privacy-policy"
+                    className="underline hover:text-foreground"
+                  >
+                    Privacy Policy
+                  </Link>
                 </span>
               </label>
 
@@ -214,12 +317,18 @@ const Footer = () => {
             </a>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-2 font-playfair">
-            <a href="#" className="transition-opacity hover:opacity-80">
+            <Link
+              href="/privacy-policy"
+              className="transition-opacity hover:opacity-80"
+            >
               Privacy Policy
-            </a>
-            <a href="#" className="transition-opacity hover:opacity-80">
+            </Link>
+            <Link
+              href="/terms-conditions"
+              className="transition-opacity hover:opacity-80"
+            >
               Terms &amp; Conditions
-            </a>
+            </Link>
           </div>
         </div>
       </div>

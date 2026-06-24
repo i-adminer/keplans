@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/cart";
+import { toast } from "sonner";
 
 interface PlanImage {
   id: string;
@@ -148,6 +149,32 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
     });
   };
 
+  const handleShare = async () => {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/product/${plan.slug}`;
+
+    // Try native share first
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          url,
+        });
+        toast.success("Shared successfully!");
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          console.error("Share failed:", err);
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied to clipboard!");
+      } catch (err) {
+        toast.error("Failed to copy link");
+      }
+    }
+  };
+
   const inCart = isInCart(plan.id);
   const inWishlist = isInWishlist(plan.id);
 
@@ -194,7 +221,7 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="lg" className="gap-2">
+            <Button variant="outline" size="lg" className="gap-2" onClick={handleShare}>
               <Share2 className="size-4" />
               <span className="hidden sm:inline">Share</span>
             </Button>

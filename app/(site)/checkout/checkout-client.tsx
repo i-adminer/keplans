@@ -466,21 +466,20 @@ export default function CheckoutClient({ user }: CheckoutClientProps) {
             <label className="text-xs text-muted-foreground leading-relaxed">
               By continuing, you agree to our{" "}
               <Link
-                href="/terms"
+                href="/terms-conditions"
                 target="_blank"
-                className="text-green-500 underline hover:text-green-500/80"
+                className="text-primary hover:underline"
               >
-                Terms of Service
+                Terms & Conditions
               </Link>{" "}
               and{" "}
               <Link
-                href="/policies"
+                href="/privacy-policy"
                 target="_blank"
-                className="text-green-500 underline hover:text-green-500/80"
+                className="text-primary hover:underline"
               >
                 Privacy Policy
               </Link>
-              .
             </label>
           </div>
 
