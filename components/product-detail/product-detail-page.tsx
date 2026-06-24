@@ -150,7 +150,8 @@ export default function ProductDetailPage({ plan }: ProductDetailProps) {
   };
 
   const handleShare = async () => {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/product/${plan.slug}`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const url = `${baseUrl}/product/${plan.slug}`;
 
     // Try native share first
     if (navigator.share) {
